@@ -17,6 +17,7 @@ export interface Card {
 	id: number;
 	color: CardColor;
 	type: CardType;
+	src: string;
 }
 
 export interface Player {

@@ -13,10 +13,10 @@
 				<fl-deck-background>
 					<ion-grid>
 						<ion-row>
-							<ion-col size="6">
+							<ion-col size="8">
 								<ion-button @click="takeCard">Take Card ({{ stackLength }})</ion-button>
 							</ion-col>
-							<ion-col size="6">
+							<ion-col size="4">
 								<fl-card :model="upperCard" />
 							</ion-col>
 						</ion-row>
@@ -27,7 +27,7 @@
 
 				<ion-grid>
 					<ion-row>
-						<ion-col size="6" v-for="card in player.cards" :key="card.id">
+						<ion-col size="4" v-for="card in player.cards" :key="card.id">
 							<fl-card @click="giveCard(card)" :model="card" />
 						</ion-col>
 					</ion-row>

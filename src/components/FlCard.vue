@@ -1,19 +1,17 @@
 <template>
-	<ion-card @click="emitClick" :style="{backgroundColor: bgColor}">
-		<ion-card-content class="ion-text-center">
-			<div>{{ model.type }}</div>
-			<div>{{ model.color }}</div>
-		</ion-card-content>
-	</ion-card>
+	<div class="fl-card ion-activatable ripple-parent" @click="emitClick">
+		<img :src="src" />
+		<ion-ripple-effect />
+	</div>
 </template>
 
 <script lang="ts">
 import { defineComponent, computed, PropType } from 'vue'
-import { IonCard, IonCardContent } from '@ionic/vue'
+import { IonRippleEffect } from '@ionic/vue'
 import { Card } from '@/store/store'
 export default defineComponent({
 	name: 'FlCard',
-	components: { IonCard, IonCardContent },
+	components: {IonRippleEffect },
 	emits: ['click'],
 	props: {
 		model: { type: Object as PropType<Card>, required: true }
@@ -24,24 +22,37 @@ export default defineComponent({
 			emit('click')
 		}
 
-		const bgColor = computed<string>(() => {
-			const colors = {
-				red: '#ff5b71',
-				green: '#44e283',
-				ball: '#ffd948',
-				acorn: '#ceba8c'
-			}
-			return colors[props.model.color]
-		})
+		const src = computed<string>(() => `assets/cards/${props.model.src}.jpg`)
 
 		return {
 			emitClick,
-			bgColor
+			src
 		}
 	}
 })
 </script>
 
 <style scoped>
+
+	.fl-card {
+		display: block;
+		width: 100%;
+		height: 1px;
+		padding-bottom: calc(159% - 1px);
+		overflow: hidden;
+		border-radius: 7px;
+		position: relative;
+		border: 1px solid var(--ion-color-medium-tint);
+		box-shadow: 0 0 4px var(--ion-color-light-shade);
+	}
+
+	.fl-card img {
+		display: block;
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+	}
 
 </style>
