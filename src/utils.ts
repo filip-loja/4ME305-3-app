@@ -2,6 +2,13 @@ import { Store } from 'vuex'
 import { RootState } from '@/store/store'
 import { actionSheetController, toastController } from '@ionic/vue'
 
+export const withTimeout = (timeout: number, userPromise: Promise<any>): Promise<any> => {
+	const checkPromise = new Promise((resolve, reject) => {
+		return setTimeout(() => reject('Request timed out'), timeout)
+	})
+	return Promise.race([checkPromise, userPromise])
+}
+
 export const changeColor = async (store: Store<RootState>): Promise<void> => {
 	const actionSheet = await actionSheetController.create({
 		header: 'Change current color',

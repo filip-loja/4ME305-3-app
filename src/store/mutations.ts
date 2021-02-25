@@ -1,5 +1,14 @@
 
 import {Card, CardColor, PayloadInitCards, PayloadInitPlayerCard, RootState} from '@/store/store'
+import {WsConnection} from '@/ws/WsConnection'
+
+export const SET_CONNECTION = (state: RootState, wsConnection: WsConnection): void => {
+	state.wsConnection = wsConnection
+}
+
+export const SET_CLIENT_ID = (state: RootState, clientId: string): void => {
+	state.clientId = clientId
+}
 
 export const INIT_PLAYER_CARDS = (state: RootState, payload: PayloadInitPlayerCard): void => {
 	if (payload.id === 1) {

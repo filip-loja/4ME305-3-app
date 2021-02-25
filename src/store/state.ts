@@ -1,7 +1,8 @@
 import { RootState } from '@/store/store'
 
 export const rootState: RootState = {
-	sample: 'Filip',
+	wsConnection: null,
+	clientId: null,
 	gameActive: false,
 	cardDeck: [],
 	cardStack: [],

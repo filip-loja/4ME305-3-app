@@ -2,6 +2,9 @@ import { ActionContext } from 'vuex'
 import {Card, CardColor, PayloadInitCards, PayloadInitPlayerCard, RootState} from '@/store/store'
 import {getCards} from '@/cards'
 import {changeColor, errorAlert} from '@/utils'
+import router from '@/router'
+import {WsConnection} from '@/ws/WsConnection'
+import {toastController} from '@ionic/vue'
 
 type A = ActionContext<RootState, RootState>
 
@@ -86,4 +89,45 @@ export const finishRound = async (context: A): Promise<any> => {
 	context.commit('INIT_ROUND', playerId)
 	// TODO API request
 	return null
+}
+
+export const createGame = async (context: A): Promise<any> => {
+	if (!context.getters['storage/filledInProfile']) {
+		await errorAlert('You have to set up your profile first!')
+		router.push({ name: 'pageProfile' }).catch(() => null)
+		return
+	}
+}
+
+export const joinGame = async (context: A, gameId: string): Promise<any> => {
+	if (!context.getters['storage/filledInProfile']) {
+		await errorAlert('You have to set up your profile first!')
+		router.push({ name: 'pageProfile' }).catch(() => null)
+		return
+	}
+}
+
+export const initServerConnection = async (context: A) => {
+	const connection = new WsConnection()
+	context.commit('SET_CONNECTION', connection)
+}
+
+export const saveUsername = async (context: A, payload: string) => {
+	let success
+	if (context.state.wsConnection) {
+		success = await context.state.wsConnection.changeUserName(payload)
+	} else {
+		success = true
+	}
+	if (success) {
+		context.commit('storage/SAVE_USERNAME', payload)
+		const toast = await toastController
+			.create({
+				message: 'Your profile was updated successfully',
+				duration: 1500,
+				position: 'bottom',
+				color: 'success'
+			})
+		await toast.present()
+	}
 }

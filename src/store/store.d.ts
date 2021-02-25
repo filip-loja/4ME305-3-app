@@ -1,6 +1,7 @@
+import { StorageState } from '@/store/module-storage/module-storage'
+import { WsConnection } from '@/ws/WsConnection'
 
 export interface RootState {
-	sample: string;
 	gameActive: boolean;
 	player1: Player;
 	player2: Player;
@@ -8,7 +9,15 @@ export interface RootState {
 	cardDeck: Card[];
 	round: Round;
 	currentColor: CardColor;
+	wsConnection: WsConnection;
+	clientId: string;
 }
+
+export interface ModulesDef {
+	storage?: StorageState
+}
+
+export type StoreDef = RootState & ModulesDef
 
 export type CardColor = 'red' | 'green' | 'ball' | 'acorn'
 export type CardType = 'seven' | 'eight' | 'nine' | 'ten' | 'jack' | 'miner' | 'king' | 'ace'
