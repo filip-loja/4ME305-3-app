@@ -1,6 +1,6 @@
-import {Store} from 'vuex'
-import {RootState} from '@/store/store'
-import { actionSheetController } from '@ionic/vue'
+import { Store } from 'vuex'
+import { RootState } from '@/store/store'
+import { actionSheetController, toastController } from '@ionic/vue'
 
 export const changeColor = async (store: Store<RootState>): Promise<void> => {
 	const actionSheet = await actionSheetController.create({
@@ -26,4 +26,15 @@ export const changeColor = async (store: Store<RootState>): Promise<void> => {
 		],
 	})
 	return actionSheet.present()
+}
+
+export const errorAlert = async (message: string): Promise<void> => {
+	const toast = await toastController
+		.create({
+			message,
+			duration: 1500,
+			position: 'top',
+			color: 'danger'
+		})
+	return toast.present();
 }

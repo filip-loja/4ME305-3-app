@@ -4,39 +4,10 @@
 
 			<div v-if="gameActive">
 
-				<ion-card>
-					<ion-card-content>
-						Current Players: {{ player.name }}
-					</ion-card-content>
-				</ion-card>
-
-				<fl-deck-background>
-					<ion-grid>
-						<ion-row>
-							<ion-col size="8">
-								<ion-button @click="takeCard">Take Card ({{ stackLength }})</ion-button>
-							</ion-col>
-							<ion-col size="4">
-								<fl-card :model="upperCard" />
-							</ion-col>
-						</ion-row>
-					</ion-grid>
-				</fl-deck-background>
-
-				<div style="border-bottom: 2px solid black"></div>
-
-				<ion-grid>
-					<ion-row>
-						<ion-col size="4" v-for="card in player.cards" :key="card.id">
-							<fl-card @click="giveCard(card)" :model="card" />
-						</ion-col>
-					</ion-row>
-				</ion-grid>
-
-				<div>
-					<ion-button :disabled="!canResetMove" @click="resetMove">Cancel</ion-button>
-					<ion-button :disabled="!canFinishRound" @click="finishRound">Confirm</ion-button>
-				</div>
+				<fl-game-panel-top />
+				<fl-table-top />
+				<fl-table-bottom />
+				<fl-game-panel-bottom />
 
 			</div>
 			<div v-else>
@@ -51,59 +22,23 @@
 <script lang="ts">
 import { defineComponent, computed } from 'vue'
 import { useStore } from '@/store'
-import { IonButton, IonCard, IonCardContent, IonPage, IonContent, IonGrid, IonRow, IonCol } from '@ionic/vue'
-import {Card, Player} from '@/store/store'
-import FlCard from '@/components/FlCard.vue'
-import FlDeckBackground from '@/components/FlDeckBackground.vue'
+import { IonButton, IonPage, IonContent } from '@ionic/vue'
+import FlGamePanelBottom from '@/components/FlGamePanelBottom.vue'
+import FlGamePanelTop from '@/components/FlGamePanelTop.vue'
+import FlTableTop from '@/components/FlTableTop.vue'
+import FlTableBottom from '@/components/FlTableBottom.vue'
 
 export default defineComponent({
 	name: 'Blank',
-	components: { IonButton, IonCard, IonCardContent, IonPage, IonContent, IonGrid, IonRow, IonCol, FlCard, FlDeckBackground },
+	components: { IonButton, IonPage, IonContent, FlGamePanelBottom, FlGamePanelTop, FlTableTop, FlTableBottom },
 	setup () {
 		const store = useStore()
-
-		const val = computed(() => store.state.sample)
 		const gameActive = computed<boolean>(() => store.state.gameActive)
-		const player = computed<Player>(() => store.getters['currentPlayer'])
-		const upperCard = computed<Card>(() => store.getters['upperCard'])
-		const stackLength = computed<number>(() => store.state.cardStack.length)
-
-		const canResetMove = computed<boolean>(() => store.getters['canResetMove'])
-		const canFinishRound = computed<boolean>(() => store.getters['canFinishRound'])
-
-		const startNewGame = () => {
-			store.dispatch('init')
-		}
-
-		const takeCard = () => {
-			store.dispatch('takeCard').catch(err => alert(err))
-		}
-
-		const giveCard = (card: Card) => {
-			store.dispatch('giveCard', card).catch(err => alert(err))
-		}
-
-		const finishRound = () => {
-			store.dispatch('finishRound').catch(err => alert(err))
-		}
-
-		const resetMove = () => {
-			store.dispatch('resetMove').catch(err => alert(err))
-		}
+		const startNewGame = () => store.dispatch('init')
 
 		return {
-			val,
 			gameActive,
-			player,
-			startNewGame,
-			takeCard,
-			finishRound,
-			giveCard,
-			resetMove,
-			upperCard,
-			stackLength,
-			canResetMove,
-			canFinishRound
+			startNewGame
 		}
 	}
 })

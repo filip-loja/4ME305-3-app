@@ -42,8 +42,8 @@ export default defineComponent({
 		overflow: hidden;
 		border-radius: 7px;
 		position: relative;
-		border: 1px solid var(--ion-color-medium-tint);
-		box-shadow: 0 0 4px var(--ion-color-light-shade);
+		border: 1px solid black;
+		box-shadow: 0 0 3px var(--ion-color-medium-tint);
 	}
 
 	.fl-card img {

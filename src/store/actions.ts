@@ -1,7 +1,7 @@
 import { ActionContext } from 'vuex'
 import {Card, CardColor, PayloadInitCards, PayloadInitPlayerCard, RootState} from '@/store/store'
 import {getCards} from '@/cards'
-import {changeColor} from '@/utils'
+import {changeColor, errorAlert} from '@/utils'
 
 type A = ActionContext<RootState, RootState>
 
@@ -33,22 +33,23 @@ export const init = async (context: A) => {
 	context.commit('START_GAME')
 }
 
-export const takeCard = (context: A): Promise<string> => {
+export const takeCard = async (context: A): Promise<any> => {
 	if (context.state.round.cardTaken) {
-		return Promise.reject('You cannot take more cards in this round!')
+		return await errorAlert('You cannot take more cards in this round!')
 	}
 	if (context.state.round.cardsGiven.length) {
-		return Promise.reject('You cannot take give away cards and take cards in one round!')
+		return await errorAlert('You cannot take give away cards and take cards in one round!')
 	}
 
 	context.commit('TAKE_CARD', context.state.round.playerId)
-	return Promise.resolve(null)
+	return null
 }
 
-export const giveCard = async (context: A, card: Card): Promise<string> => {
+export const giveCard = async (context: A, card: Card): Promise<any> => {
 	if (context.state.round.cardTaken) {
-		return Promise.reject('You cannot take give away cards after you have taken cards from stack!')
+		return await errorAlert('You cannot take give away cards after you have taken cards from stack!')
 	}
+
 	const upperCard = context.getters['upperCard']
 	if (
 		(!context.state.round.cardsGiven.length && canGiveCard(upperCard, card, context.state.currentColor)) ||
@@ -64,25 +65,25 @@ export const giveCard = async (context: A, card: Card): Promise<string> => {
 		}
 
 		// TODO effect
-		return Promise.resolve(null)
+		return null
 	}
-	return Promise.reject('You cannot give away this card!')
+	return await errorAlert('You cannot give away this card!')
 }
 
-export const resetMove = (context: A): Promise<string> => {
+export const resetMove = async (context: A): Promise<any> => {
 	if (!context.getters['canResetMove']) {
-		return Promise.reject('You cannot do that!')
+		return await errorAlert('You cannot do that!')
 	}
 	context.commit('RESET_MOVE')
-	return Promise.resolve(null)
+	return null
 }
 
-export const finishRound = (context: A): Promise<string> => {
+export const finishRound = async (context: A): Promise<any> => {
 	if (!context.getters['canFinishRound']) {
-		return Promise.reject('You did not perform any action!')
+		return await errorAlert('You did not perform any action!')
 	}
 	const playerId = context.state.round.playerId === 1 ? 2 : 1
 	context.commit('INIT_ROUND', playerId)
 	// TODO API request
-	return Promise.resolve(null)
+	return null
 }
