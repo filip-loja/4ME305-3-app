@@ -56,3 +56,7 @@ export const checkProfile = async () => {
 		return Promise.resolve(true)
 	}
 }
+
+export const resetGame = () => {
+	window.location.href = '/'
+}

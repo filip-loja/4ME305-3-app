@@ -10,18 +10,31 @@ export const SET_CLIENT_ID = (state: RootState, clientId: string): void => {
 	state.clientId = clientId
 }
 
-export const SET_GAME = (state: RootState, payload: { id: string, creator: boolean }): void => {
-	state.game = {
-		id: payload.id,
-		started: false,
-		players: [],
-		creator: payload.creator
+export const SET_GAME = (state: RootState, payload: { id: string; creator: boolean }): void => {
+	if (!payload) {
+		state.game = null
+	} else {
+		state.game = {
+			id: payload.id,
+			started: false,
+			players: [],
+			creator: payload.creator
+		}
 	}
 }
 
 export const ADD_PLAYERS = (state: RootState, newPlayers: ClientPlayer[]): void => {
 	if (state.game) {
 		state.game.players.push(...newPlayers)
+	}
+}
+
+export const REMOVE_PLAYER = (state: RootState, id: string): void => {
+	if (state.game) {
+		const index = state.game.players.findIndex(player => player.id === id)
+		if (index >= 0) {
+			state.game.players.splice(index, 1)
+		}
 	}
 }
 

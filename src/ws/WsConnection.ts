@@ -1,8 +1,8 @@
 import { Socket } from 'socket.io-client/build/socket'
 import { Store } from 'vuex'
-import {ClientPlayer, StoreDef} from '@/store/store'
+import { ClientPlayer, StoreDef } from '@/store/store'
 import { io } from 'socket.io-client'
-import { withTimeout } from '@/utils'
+import { resetGame, withTimeout } from '@/utils'
 import store from '@/store'
 
 export class WsConnection {
@@ -15,11 +15,17 @@ export class WsConnection {
 		this.createSocket()
 
 		this.socket.on('connection-established', (clientId: string) => this.store.commit('SET_CLIENT_ID', clientId))
+		this.socket.on('reset', (reason: string) => {
+			console.log(reason)
+			resetGame()
+		})
 
 		this.socket.on('game-player-added', (newPlayer: ClientPlayer) => {
 			this.store.commit('ADD_PLAYERS', [newPlayer])
 			console.log('Player added: ', newPlayer)
 		})
+
+		this.socket.on('game-player-removed', (playerId: string) => this.store.commit('REMOVE_PLAYER', playerId))
 
 	}
 
@@ -55,6 +61,21 @@ export class WsConnection {
 			if (resp.success) {
 				this.store.commit('SET_GAME', { id: gameId, creator: false })
 				this.store.commit('ADD_PLAYERS', resp.players)
+				return Promise.resolve(null)
+			} else {
+				return Promise.resolve(resp.message)
+			}
+		} catch (e) {
+			console.log(e)
+			return Promise.resolve(e)
+		}
+	}
+
+	async leaveGame (): Promise<string> {
+		try {
+			const resp = await this.syncEmit('game-leave', this.store.state.game.id)
+			if (resp.success) {
+				this.store.commit('SET_GAME', null)
 				return Promise.resolve(null)
 			} else {
 				return Promise.resolve(resp.message)
