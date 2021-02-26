@@ -1,5 +1,6 @@
 import { Store } from 'vuex'
 import { RootState } from '@/store/store'
+import store from '@/store'
 import { actionSheetController, toastController } from '@ionic/vue'
 
 export const withTimeout = (timeout: number, userPromise: Promise<any>): Promise<any> => {
@@ -35,13 +36,23 @@ export const changeColor = async (store: Store<RootState>): Promise<void> => {
 	return actionSheet.present()
 }
 
-export const errorAlert = async (message: string): Promise<void> => {
+export const errorAlert = async (message: string, position: 'top' | 'bottom' = 'top'): Promise<void> => {
 	const toast = await toastController
 		.create({
 			message,
 			duration: 1500,
-			position: 'top',
+			position: position,
 			color: 'danger'
 		})
 	return toast.present();
+}
+
+export const checkProfile = async () => {
+	// @ts-ignore
+	if (!store.getters['storage/filledInProfile']) {
+		await errorAlert('You have to set up your profile first!', 'bottom')
+		return Promise.resolve(false)
+	} else {
+		return Promise.resolve(true)
+	}
 }

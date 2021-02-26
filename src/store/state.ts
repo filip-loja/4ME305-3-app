@@ -3,6 +3,8 @@ import { RootState } from '@/store/store'
 export const rootState: RootState = {
 	wsConnection: null,
 	clientId: null,
+	game: null,
+
 	gameActive: false,
 	cardDeck: [],
 	cardStack: [],

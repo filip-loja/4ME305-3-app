@@ -1,5 +1,7 @@
-import { createRouter, createWebHistory } from '@ionic/vue-router';
-import { RouteRecordRaw } from 'vue-router';
+import { createRouter, createWebHistory } from '@ionic/vue-router'
+import { RouteRecordRaw } from 'vue-router'
+import { checkProfile } from '@/utils'
+import store from '@/store'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -14,13 +16,28 @@ const routes: Array<RouteRecordRaw> = [
 	},
 	{
 		path: '/join-game',
-		component: () => import('@/views/PageHome.vue'),
-		name: 'pageJoinGame'
+		component: () => import('@/views/PageJoinGame.vue'),
+		name: 'pageJoinGame',
+		beforeEnter: async () => {
+			if (await checkProfile()) {
+				return true
+			} else {
+				return { name: 'pageProfile' }
+			}
+		}
 	},
-  {
-    path: '/folder/:id',
-    component: () => import ('../views/Folder.vue')
-  },
+	{
+		path: '/waiting-room',
+		component: () => import('@/views/PageWaitingRoom.vue'),
+		name: 'pageWaitingRoom',
+		beforeEnter: () => {
+			if (store.state.game) {
+				return true
+			} else {
+				return { name: 'pageHome' }
+			}
+		}
+	},
 	{
 		path: '/blank',
 		component: () => import('@/views/Blank.vue')

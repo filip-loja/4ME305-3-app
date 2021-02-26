@@ -1,13 +1,13 @@
 import { Socket } from 'socket.io-client/build/socket'
 import { Store } from 'vuex'
-import { StoreDef } from '@/store/store'
+import {ClientPlayer, StoreDef} from '@/store/store'
 import { io } from 'socket.io-client'
 import { withTimeout } from '@/utils'
 import store from '@/store'
 
 export class WsConnection {
 
-	url = 'http://localhost:3000'
+	url = 'http://192.168.0.101:3000'
 	socket: Socket = null
 	store: Store<StoreDef> = store
 
@@ -15,6 +15,11 @@ export class WsConnection {
 		this.createSocket()
 
 		this.socket.on('connection-established', (clientId: string) => this.store.commit('SET_CLIENT_ID', clientId))
+
+		this.socket.on('game-player-added', (newPlayer: ClientPlayer) => {
+			this.store.commit('ADD_PLAYERS', [newPlayer])
+			console.log('Player added: ', newPlayer)
+		})
 
 	}
 
@@ -31,6 +36,33 @@ export class WsConnection {
 
 	changeUserName (username: string): Promise<boolean> {
 		return this.syncEmit('client-rename', username)
+	}
+
+	async createGame (): Promise<boolean> {
+		try {
+			const id = await this.syncEmit('game-create')
+			this.store.commit('SET_GAME', { id, creator: true })
+			return Promise.resolve(true)
+		} catch (e) {
+			console.log(e)
+			return Promise.resolve(false)
+		}
+	}
+
+	async joinGame (gameId: string): Promise<string> {
+		try {
+			const resp = await this.syncEmit('game-join', gameId)
+			if (resp.success) {
+				this.store.commit('SET_GAME', { id: gameId, creator: false })
+				this.store.commit('ADD_PLAYERS', resp.players)
+				return Promise.resolve(null)
+			} else {
+				return Promise.resolve(resp.message)
+			}
+		} catch (e) {
+			console.log(e)
+			return Promise.resolve(e)
+		}
 	}
 
 	syncEmit (eventName: string, payload: any = null): Promise<any> {

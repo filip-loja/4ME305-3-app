@@ -1,5 +1,5 @@
 
-import {Card, CardColor, PayloadInitCards, PayloadInitPlayerCard, RootState} from '@/store/store'
+import {Card, CardColor, ClientPlayer, PayloadInitCards, PayloadInitPlayerCard, RootState} from '@/store/store'
 import {WsConnection} from '@/ws/WsConnection'
 
 export const SET_CONNECTION = (state: RootState, wsConnection: WsConnection): void => {
@@ -8,6 +8,21 @@ export const SET_CONNECTION = (state: RootState, wsConnection: WsConnection): vo
 
 export const SET_CLIENT_ID = (state: RootState, clientId: string): void => {
 	state.clientId = clientId
+}
+
+export const SET_GAME = (state: RootState, payload: { id: string, creator: boolean }): void => {
+	state.game = {
+		id: payload.id,
+		started: false,
+		players: [],
+		creator: payload.creator
+	}
+}
+
+export const ADD_PLAYERS = (state: RootState, newPlayers: ClientPlayer[]): void => {
+	if (state.game) {
+		state.game.players.push(...newPlayers)
+	}
 }
 
 export const INIT_PLAYER_CARDS = (state: RootState, payload: PayloadInitPlayerCard): void => {

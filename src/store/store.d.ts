@@ -11,6 +11,7 @@ export interface RootState {
 	currentColor: CardColor;
 	wsConnection: WsConnection;
 	clientId: string;
+	game: Game;
 }
 
 export interface ModulesDef {
@@ -42,6 +43,18 @@ export interface Round {
 	cardTaken: boolean;
 	cardsGiven: Card[];
 	startColor: CardColor;
+}
+
+export interface ClientPlayer {
+	id: string;
+	name: string;
+}
+
+export interface Game {
+	id: string;
+	started: boolean;
+	players: ClientPlayer[];
+	creator: boolean
 }
 
 export interface PayloadInitPlayerCard {

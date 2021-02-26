@@ -91,22 +91,6 @@ export const finishRound = async (context: A): Promise<any> => {
 	return null
 }
 
-export const createGame = async (context: A): Promise<any> => {
-	if (!context.getters['storage/filledInProfile']) {
-		await errorAlert('You have to set up your profile first!')
-		router.push({ name: 'pageProfile' }).catch(() => null)
-		return
-	}
-}
-
-export const joinGame = async (context: A, gameId: string): Promise<any> => {
-	if (!context.getters['storage/filledInProfile']) {
-		await errorAlert('You have to set up your profile first!')
-		router.push({ name: 'pageProfile' }).catch(() => null)
-		return
-	}
-}
-
 export const initServerConnection = async (context: A) => {
 	const connection = new WsConnection()
 	context.commit('SET_CONNECTION', connection)

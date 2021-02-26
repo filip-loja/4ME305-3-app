@@ -18,7 +18,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
-import { IonButton, toastController, IonList, IonItem, IonLabel, IonInput } from '@ionic/vue'
+import { IonButton, IonList, IonItem, IonLabel, IonInput } from '@ionic/vue'
 import { useStore } from '@/store'
 import { useRouter } from 'vue-router'
 import LayoutMain from '@/layouts/LayoutMain.vue'
