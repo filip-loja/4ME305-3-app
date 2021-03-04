@@ -16,7 +16,7 @@
 		</ion-card>
 		<div>
 			<template v-if="game.creator">
-				<ion-button :disabled="!canStart">Start game</ion-button>
+				<ion-button :disabled="!canStart" @click="startGame">Start game</ion-button>
 				<ion-button @click="leaveGame">Cancel game</ion-button>
 			</template>
 			<template v-else>
@@ -54,13 +54,18 @@ export default defineComponent({
 			}
 		}
 
+		const startGame = () => {
+			ws.value.startGame()
+		}
+
 		// TODO Call beforeRouteLeave guards in deactivated components.
 		// odhlasit sa z hry ked idem prec zo stranky
 
 		return {
 			game,
 			canStart,
-			leaveGame
+			leaveGame,
+			startGame
 		}
 	}
 })

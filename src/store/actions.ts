@@ -1,5 +1,5 @@
 import { ActionContext } from 'vuex'
-import {Card, CardColor, PayloadInitCards, PayloadInitPlayerCard, RootState} from '@/store/store'
+import {Card, CardColor, GameInitialState, PayloadInitCards, PayloadInitPlayerCard, RootState} from '@/store/store'
 import {getCards} from '@/cards'
 import {changeColor, errorAlert} from '@/utils'
 import router from '@/router'
@@ -16,6 +16,10 @@ function canGiveCard (upperCard: Card, newCard: Card, currentColor: CardColor): 
 
 function canGiveMoreCards (upperCard: Card, newCard: Card): boolean {
 	return upperCard.type === newCard.type
+}
+
+export const initGame = (context: A, initialState: GameInitialState) => {
+	console.log(initialState)
 }
 
 export const init = async (context: A) => {

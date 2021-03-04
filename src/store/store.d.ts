@@ -66,3 +66,14 @@ export interface PayloadInitCards {
 	stackCards: Card[];
 	deckCard: Card;
 }
+
+export interface GameInitialState {
+	stack: string[];
+	deck: string[];
+	color: CardColor;
+	type: CardType;
+	currentPlayer: string;
+	cardAssignment: {
+		[key: string]: string[]
+	}
+}

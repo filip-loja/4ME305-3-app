@@ -1,6 +1,6 @@
 import { Socket } from 'socket.io-client/build/socket'
 import { Store } from 'vuex'
-import { ClientPlayer, StoreDef } from '@/store/store'
+import {ClientPlayer, GameInitialState, StoreDef} from '@/store/store'
 import { io } from 'socket.io-client'
 import { resetGame, withTimeout } from '@/utils'
 import store from '@/store'
@@ -26,6 +26,8 @@ export class WsConnection {
 		})
 
 		this.socket.on('game-player-removed', (playerId: string) => this.store.commit('REMOVE_PLAYER', playerId))
+
+		this.socket.on('game-started', (initialState: GameInitialState) => this.store.dispatch('initGame', initialState))
 
 	}
 
@@ -84,6 +86,11 @@ export class WsConnection {
 			console.log(e)
 			return Promise.resolve(e)
 		}
+	}
+
+	startGame (): void {
+		const gameId = this.store.state.game.id
+		this.socket.emit('game-start', gameId)
 	}
 
 	syncEmit (eventName: string, payload: any = null): Promise<any> {
