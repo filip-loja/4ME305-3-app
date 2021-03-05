@@ -1,6 +1,6 @@
 import { Socket } from 'socket.io-client/build/socket'
 import { Store } from 'vuex'
-import {ClientPlayer, GameInitialState, StoreDef} from '@/store/store'
+import { ClientPlayer, GameInitialState, PayloadNextTurn, StoreDef } from '@/store/store'
 import { io } from 'socket.io-client'
 import { resetGame, withTimeout } from '@/utils'
 import store from '@/store'
@@ -14,7 +14,7 @@ export class WsConnection {
 	constructor () {
 		this.createSocket()
 
-		this.socket.on('connection-established', (clientId: string) => this.store.commit('SET_CLIENT_ID', clientId))
+		this.socket.on('connection-established', (playerId: string) => this.store.commit('SET_PLAYER_ID', playerId))
 		this.socket.on('reset', (reason: string) => {
 			console.log(reason)
 			resetGame()
@@ -28,6 +28,7 @@ export class WsConnection {
 		this.socket.on('game-player-removed', (playerId: string) => this.store.commit('REMOVE_PLAYER', playerId))
 
 		this.socket.on('game-started', (initialState: GameInitialState) => this.store.dispatch('initGame', initialState))
+		this.socket.on('game-new-turn', (payload: PayloadNextTurn) => this.store.commit('PREPARE_NEW_TURN', payload))
 
 	}
 
@@ -49,7 +50,7 @@ export class WsConnection {
 	async createGame (): Promise<boolean> {
 		try {
 			const id = await this.syncEmit('game-create')
-			this.store.commit('SET_GAME', { id, creator: true })
+			this.store.commit('CREATE_GAME', { id, creator: true })
 			return Promise.resolve(true)
 		} catch (e) {
 			console.log(e)
@@ -61,7 +62,7 @@ export class WsConnection {
 		try {
 			const resp = await this.syncEmit('game-join', gameId)
 			if (resp.success) {
-				this.store.commit('SET_GAME', { id: gameId, creator: false })
+				this.store.commit('CREATE_GAME', { id: gameId, creator: false })
 				this.store.commit('ADD_PLAYERS', resp.players)
 				return Promise.resolve(null)
 			} else {
@@ -77,7 +78,7 @@ export class WsConnection {
 		try {
 			const resp = await this.syncEmit('game-leave', this.store.state.game.id)
 			if (resp.success) {
-				this.store.commit('SET_GAME', null)
+				this.store.commit('CREATE_GAME', null)
 				return Promise.resolve(null)
 			} else {
 				return Promise.resolve(resp.message)
@@ -91,6 +92,26 @@ export class WsConnection {
 	startGame (): void {
 		const gameId = this.store.state.game.id
 		this.socket.emit('game-start', gameId)
+	}
+
+	// TODO implement BE
+	async commitGameTurn (): Promise<string> {
+		try {
+			const resp = await this.syncEmit('game-turn-commit', {
+				id: store.state.game.id, payload: this.store.state.game.currentTurn
+			})
+			if (resp.success) {
+				this.store.commit('COMMIT_CURRENT_TURN')
+				this.store.commit('SET_CURRENT_PLAYER_ID', resp.nextPlayerId)
+				console.log('TURN COMMITTED')
+				return Promise.resolve(null)
+			} else {
+				return Promise.resolve(resp.message)
+			}
+		} catch (e) {
+			console.log(e)
+			return Promise.resolve(e)
+		}
 	}
 
 	syncEmit (eventName: string, payload: any = null): Promise<any> {

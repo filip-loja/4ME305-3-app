@@ -26,7 +26,7 @@ export default defineComponent({
 	setup () {
 		const store = useStore()
 		const takeCard = () => store.dispatch('takeCard')
-		const upperCard = computed<Card>(() => store.getters['upperCard'])
+		const upperCard = computed<Card>(() => store.getters['deckUpperCard'])
 
 		const colorIcon = computed<string>(() => {
 			const colors = {
@@ -35,7 +35,8 @@ export default defineComponent({
 				ball: 'ball.png',
 				acorn: 'acorn.png'
 			}
-			return `assets/colors/${colors[store.state.currentColor]}`
+			// @ts-ignore
+			return `assets/colors/${colors[ store.getters['currentColor'] ]}`
 		})
 
 		return {

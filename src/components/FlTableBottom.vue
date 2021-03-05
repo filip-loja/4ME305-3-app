@@ -2,7 +2,7 @@
 	<fl-table class="fl-table-bottom">
 		<ion-grid>
 			<ion-row>
-				<ion-col size="3" v-for="card in player.cards" :key="card.id">
+				<ion-col size="3" v-for="card in myCards" :key="card.id">
 					<fl-card @click="giveCard(card)" :model="card" />
 				</ion-col>
 			</ion-row>
@@ -12,7 +12,7 @@
 
 <script lang="ts">
 import { defineComponent, computed } from 'vue'
-import { Card, Player } from '@/store/store'
+import { Card } from '@/store/store'
 import { useStore } from '@/store'
 import { IonGrid, IonRow, IonCol } from '@ionic/vue'
 import FlTable from '@/components/FlTable.vue'
@@ -22,11 +22,11 @@ export default defineComponent({
 	components: { FlTable, FlCard, IonGrid, IonRow, IonCol },
 	setup () {
 		const store = useStore()
-		const player = computed<Player>(() => store.getters['currentPlayer'])
+		const myCards = computed<Card[]>(() => store.getters['myCards'])
 		const giveCard = (card: Card) => store.dispatch('giveCard', card)
 
 		return {
-			player,
+			myCards,
 			giveCard
 		}
 	}

@@ -2,16 +2,16 @@ import { StorageState } from '@/store/module-storage/module-storage'
 import { WsConnection } from '@/ws/WsConnection'
 
 export interface RootState {
-	gameActive: boolean;
-	player1: Player;
-	player2: Player;
-	cardStack: Card[];
-	cardDeck: Card[];
-	round: Round;
-	currentColor: CardColor;
 	wsConnection: WsConnection;
-	clientId: string;
 	game: Game;
+	cardMap: CardMap;
+	cardsStack: string[];
+	cardsDeck: string[];
+	cardColor: CardColor;
+	activeEffects: CardEffect[];
+	currentPlayerId: string;
+	myPlayerId: string;
+	myPlayerCardIds: string[];
 }
 
 export interface ModulesDef {
@@ -22,27 +22,17 @@ export type StoreDef = RootState & ModulesDef
 
 export type CardColor = 'red' | 'green' | 'ball' | 'acorn'
 export type CardType = 'seven' | 'eight' | 'nine' | 'ten' | 'jack' | 'miner' | 'king' | 'ace'
+export type CardEffect = 'seven' | 'ace'
 
 export interface Card {
-	id: number;
+	id: string;
 	color: CardColor;
 	type: CardType;
 	src: string;
 }
 
-export interface Player {
-	id: number;
-	name: string;
-	picture?: string;
-	startingCardsNum: number;
-	cards: Card[];
-}
-
-export interface Round {
-	playerId: number;
-	cardTaken: boolean;
-	cardsGiven: Card[];
-	startColor: CardColor;
+export interface CardMap {
+	[key: string]: Card;
 }
 
 export interface ClientPlayer {
@@ -54,17 +44,15 @@ export interface Game {
 	id: string;
 	started: boolean;
 	players: ClientPlayer[];
-	creator: boolean
+	creator: boolean;
+	currentTurn: CurrentTurn;
 }
 
-export interface PayloadInitPlayerCard {
-	id: number;
-	cards: Card[];
-}
-
-export interface PayloadInitCards {
-	stackCards: Card[];
-	deckCard: Card;
+export interface CurrentTurn {
+	cardsTaken: string[];
+	cardsGiven: string[];
+	newColor: CardColor;
+	newEffects: CardEffect[];
 }
 
 export interface GameInitialState {
@@ -76,4 +64,14 @@ export interface GameInitialState {
 	cardAssignment: {
 		[key: string]: string[]
 	}
+}
+
+export interface PayloadNextTurn {
+	stackAdded: string[];
+	stackRemoved: string[];
+	deckAdded: string[];
+	deckRemoved: string[];
+	color: CardColor;
+	effects: CardEffect[];
+	currentPlayer: string;
 }

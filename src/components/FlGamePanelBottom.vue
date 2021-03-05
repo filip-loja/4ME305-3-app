@@ -19,10 +19,11 @@ export default defineComponent({
 	setup () {
 		const store = useStore()
 
-		const canResetMove = computed<boolean>(() => store.getters['canResetMove'])
-		const canFinishRound = computed<boolean>(() => store.getters['canFinishRound'])
-		const finishMove = () => store.dispatch('finishRound')
+		const isMyTurn = computed<boolean>(() => store.getters['isMyTurn'])
+		const canResetMove = computed<boolean>(() => isMyTurn.value && store.getters['canResetMove'])
+		const canFinishRound = computed<boolean>(() => isMyTurn.value && store.getters['canFinishRound'])
 		const resetMove = () => store.dispatch('resetMove')
+		const finishMove = () => store.dispatch('commitGameTurn')
 
 		return {
 			canResetMove,

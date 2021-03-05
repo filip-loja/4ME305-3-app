@@ -9,6 +9,7 @@
 import { defineComponent, computed, PropType } from 'vue'
 import { IonRippleEffect } from '@ionic/vue'
 import { Card } from '@/store/store'
+import { useStore } from '@/store'
 export default defineComponent({
 	name: 'FlCard',
 	components: {IonRippleEffect },
@@ -17,9 +18,11 @@ export default defineComponent({
 		model: { type: Object as PropType<Card>, required: true }
 	},
 	setup (props, { emit }) {
-
+		const store = useStore()
 		const emitClick = () => {
-			emit('click')
+			if (store.getters['isMyTurn']) {
+				emit('click')
+			}
 		}
 
 		const src = computed<string>(() => `assets/cards/${props.model.src}.jpg`)

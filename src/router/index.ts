@@ -39,9 +39,21 @@ const routes: Array<RouteRecordRaw> = [
 		}
 	},
 	{
-		path: '/blank',
-		component: () => import('@/views/Blank.vue')
+		path: '/game-table',
+		component: () => import('@/views/PageGameTable.vue'),
+		name: 'pageGameTable',
+		beforeEnter: () => {
+			if (store.state.game && store.state.game.started) {
+				return true
+			} else {
+				return { name: 'pageHome' }
+			}
+		}
 	},
+	// {
+	// 	path: '/blank',
+	// 	component: () => import('@/views/Blank.vue')
+	// },
 	// {
 	// 	path: '/ws',
 	// 	component: () => import('@/views/WsTest.vue')

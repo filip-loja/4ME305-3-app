@@ -11,12 +11,18 @@
 import { defineComponent } from 'vue'
 import { IonButton, IonIcon } from '@ionic/vue'
 import { add } from 'ionicons/icons'
+import { useStore } from '@/store'
 export default defineComponent({
 	name: 'FlCardStack',
 	emits: ['click'],
 	components: { IonButton, IonIcon },
 	setup (props, { emit }) {
-		const emitClick = () => emit('click')
+		const store = useStore()
+		const emitClick = () => {
+			if (store.getters['isMyTurn']) {
+				emit('click')
+			}
+		}
 		return {
 			add,
 			emitClick

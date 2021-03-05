@@ -24,7 +24,8 @@ export default defineComponent({
 				ball: '#ffd948',
 				acorn: '#ceba8c'
 			}
-			return colors[store.state.currentColor]
+			// @ts-ignore
+			return colors[store.getters['currentColor']]
 		})
 		return {
 			bgColor

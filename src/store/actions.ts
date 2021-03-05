@@ -1,6 +1,5 @@
 import { ActionContext } from 'vuex'
-import {Card, CardColor, GameInitialState, PayloadInitCards, PayloadInitPlayerCard, RootState} from '@/store/store'
-import {getCards} from '@/cards'
+import {Card, CardColor, GameInitialState, RootState} from '@/store/store'
 import {changeColor, errorAlert} from '@/utils'
 import router from '@/router'
 import {WsConnection} from '@/ws/WsConnection'
@@ -19,59 +18,45 @@ function canGiveMoreCards (upperCard: Card, newCard: Card): boolean {
 }
 
 export const initGame = (context: A, initialState: GameInitialState) => {
+	context.commit('INITIALIZE_GAME', initialState)
+	context.commit('START_GAME', initialState)
+	router.push({ name: 'pageGameTable' }).catch(() => null)
 	console.log(initialState)
 }
 
-export const init = async (context: A) => {
-	const cards: Card[] = await getCards()
-
-	const cardsPlayer1: Card[] = cards.splice(0, context.state.player1.startingCardsNum)
-	const cardsPlayer2: Card[] = cards.splice(0, context.state.player2.startingCardsNum)
-	context.commit('INIT_PLAYER_CARDS', { id: 1, cards: cardsPlayer1 } as PayloadInitPlayerCard)
-	context.commit('INIT_PLAYER_CARDS', { id: 2, cards: cardsPlayer2 } as PayloadInitPlayerCard)
-	const playerId = Math.random() > 0.5 ? 1 : 2
-
-	const payload: PayloadInitCards = {
-		deckCard: cards.shift(),
-		stackCards: cards
-	}
-	context.commit('INIT_CARDS', payload)
-	context.commit('INIT_ROUND', playerId)
-	context.commit('START_GAME')
-}
-
 export const takeCard = async (context: A): Promise<any> => {
-	if (context.state.round.cardTaken) {
+	if (context.getters.cardsTaken) {
 		return await errorAlert('You cannot take more cards in this round!')
 	}
-	if (context.state.round.cardsGiven.length) {
-		return await errorAlert('You cannot take give away cards and take cards in one round!')
+	if (context.getters.cardsGiven) {
+		return await errorAlert('You cannot give away cards and take cards in one turn!')
 	}
 
-	context.commit('TAKE_CARD', context.state.round.playerId)
+	// TODO zohladnit efekty
+	const cardsToTake = 1
+	context.commit('TAKE_CARDS', cardsToTake)
 	return null
 }
 
-export const giveCard = async (context: A, card: Card): Promise<any> => {
-	if (context.state.round.cardTaken) {
-		return await errorAlert('You cannot take give away cards after you have taken cards from stack!')
+export const giveCard = async (context: A, currentCard: Card): Promise<any> => {
+	if (context.getters['cardsTaken']) {
+		return await errorAlert('You cannot give away cards after you have taken cards from stack!')
 	}
 
-	const upperCard = context.getters['upperCard']
-	if (
-		(!context.state.round.cardsGiven.length && canGiveCard(upperCard, card, context.state.currentColor)) ||
-		(context.state.round.cardsGiven.length && canGiveMoreCards(upperCard, card))
-	) {
-		context.commit('GIVE_CARD', card)
+	const upperCard = context.getters['deckUpperCard']
 
-		if (card.type === 'miner') {
-			// TODO opravit type parametra
+	if (
+		(!context.getters['cardsGiven'] && canGiveCard(upperCard, currentCard, context.getters['currentColor'])) ||
+		(context.getters['cardsGiven'] && canGiveMoreCards(upperCard, currentCard))
+	) {
+		context.commit('GIVE_CARD', currentCard)
+
+		if (currentCard.type === 'miner') {
 			await changeColor(context as any)
-		} else if (card.color !== context.state.currentColor) {
-			context.commit('CHANGE_CURRENT_COLOR', card.color)
+		} else if (currentCard.color !== context.getters['currentColor']) {
+			context.commit('CHANGE_CURRENT_COLOR', currentCard.color)
 		}
 
-		// TODO effect
 		return null
 	}
 	return await errorAlert('You cannot give away this card!')
@@ -85,14 +70,11 @@ export const resetMove = async (context: A): Promise<any> => {
 	return null
 }
 
-export const finishRound = async (context: A): Promise<any> => {
+export const commitGameTurn = async (context: A): Promise<any> => {
 	if (!context.getters['canFinishRound']) {
 		return await errorAlert('You did not perform any action!')
 	}
-	const playerId = context.state.round.playerId === 1 ? 2 : 1
-	context.commit('INIT_ROUND', playerId)
-	// TODO API request
-	return null
+	await context.state.wsConnection.commitGameTurn()
 }
 
 export const initServerConnection = async (context: A) => {

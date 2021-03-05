@@ -2,7 +2,7 @@
 	<div style="display: block; width: 100%; height: 50px;"></div>
 	<ion-header class="fl-game-header">
 		<div class="fl-game-header__inner">
-			<div></div>
+			<div>{{ currentPlayerName }}</div>
 			<div>
 				<ion-button color="danger" @click="exitGame">
 					<ion-icon :icon="exit" />
@@ -12,15 +12,17 @@
 	</ion-header>
 </template>
 
-<script>
-import { defineComponent } from 'vue'
+<script lang="ts">
+import { defineComponent, computed } from 'vue'
 import { IonButton, IonHeader, IonIcon, alertController } from '@ionic/vue'
 import { exit } from 'ionicons/icons'
+import { useStore } from '@/store'
 export default defineComponent({
 	name: 'FlGamePanelTop',
 	components: { IonButton, IonHeader, IonIcon },
 	setup () {
-
+		const store = useStore()
+		const currentPlayerName = computed<string>(() => store.getters['currentPlayerName'])
 		const exitGame = async () => {
 			const alert = await alertController
 				.create({
@@ -44,6 +46,7 @@ export default defineComponent({
 		}
 
 		return {
+			currentPlayerName,
 			exitGame,
 			exit
 		}
