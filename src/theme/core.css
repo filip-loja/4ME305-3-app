@@ -7,3 +7,14 @@ ion-toolbar {
     height: 55px;
     font-weight: bold;
 }
+
+.fl-round-toast {
+    --width: 60%;
+    --height: 120px;
+    --border-radius: 20px;
+    --background: var(--ion-color-primary);
+    text-align: center;
+    font-size: 34px;
+    font-weight: bold;
+    transform: translateY(-50px);
+}

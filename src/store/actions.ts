@@ -8,7 +8,6 @@ import { toastController } from '@ionic/vue'
 type A = ActionContext<RootState, RootState>
 
 function canGiveCard (upperCard: Card, newCard: Card, currentColor: CardColor): boolean {
-	// TODO rozsirit logiku
 	if (newCard.type === 'miner') return true
 	return upperCard.type === newCard.type || currentColor === newCard.color
 }
@@ -17,12 +16,21 @@ function canGiveMoreCards (upperCard: Card, newCard: Card): boolean {
 	return upperCard.type === newCard.type
 }
 
-export const initRound = (context: A, initialState: RoundInitialState) => {
+export const initRound = async (context: A, initialState: RoundInitialState) => {
 	context.commit('INIT_ROUND', initialState)
 	if (!context.state.game.started) {
 		context.commit('START_GAME', initialState)
 		router.push({ name: 'pageGameTable' }).catch(() => null)
 	}
+
+	const toast = await toastController
+		.create({
+			message: `Round ${context.state.game.round}`,
+			position: 'middle',
+			cssClass: 'fl-round-toast',
+			duration: 1500
+		})
+	return toast.present()
 }
 
 export const takeCard = async (context: A): Promise<any> => {
