@@ -1,9 +1,9 @@
 import { ActionContext } from 'vuex'
-import {Card, CardColor, GameInitialState, RootState} from '@/store/store'
+import { Card, CardColor, GameInitialState, RootState } from '@/store/store'
 import {changeColor, errorAlert} from '@/utils'
 import router from '@/router'
-import {WsConnection} from '@/ws/WsConnection'
-import {toastController} from '@ionic/vue'
+import { WsConnection } from '@/ws/WsConnection'
+import { toastController } from '@ionic/vue'
 
 type A = ActionContext<RootState, RootState>
 
@@ -35,7 +35,6 @@ export const takeCard = async (context: A): Promise<any> => {
 		return await errorAlert('You cannot give away cards and take cards in one turn!')
 	}
 	// TODO kontrola ci su karty v stacku
-	// TODO zohladnit efekty
 	context.commit('TAKE_CARDS', context.getters['cardsToTake'])
 	return null
 }
@@ -46,6 +45,9 @@ export const giveCard = async (context: A, currentCard: Card): Promise<any> => {
 	}
 	if (context.getters['pendingEffect'] === 'seven' && currentCard.type !== 'seven') {
 		return await errorAlert('The player before you played "seven". You need to take cards or play another "seven".')
+	}
+	if (context.getters['pendingEffect'] === 'ace' && currentCard.type !== 'ace') {
+		return await errorAlert('"Ace" card is in effect. You have to play another "Ace" or wait one round.')
 	}
 
 	const upperCard = context.getters['deckUpperCard']
@@ -79,6 +81,7 @@ export const commitGameTurn = async (context: A): Promise<any> => {
 	if (!context.getters['canFinishRound']) {
 		return await errorAlert('You did not perform any action!')
 	}
+	context.commit('WAIT_TURN')
 	context.commit('PRESERVE_EFFECTS')
 	await context.state.wsConnection.commitGameTurn()
 }

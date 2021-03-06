@@ -65,5 +65,9 @@ export const canResetMove = (state: RootState, getters: any): boolean => {
 }
 
 export const canFinishRound = (state: RootState, getters: any): boolean => {
-	return getters.cardsTaken || getters.cardsGiven
+	return getters.cardsTaken || getters.cardsGiven || getters.pendingEffect === 'ace'
+}
+
+export const turnWaited = (state: RootState, getters: any): boolean => {
+	return !getters.cardsTaken && !getters.cardsGiven && getters.pendingEffect === 'ace'
 }

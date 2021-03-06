@@ -116,12 +116,16 @@ export const PRESERVE_EFFECTS = (state: RootState): void => {
 	state.game.currentTurn.newEffects.push(...state.activeEffects)
 }
 
+export const WAIT_TURN = (state: RootState): void => {
+	state.activeEffects.pop()
+}
+
 export const GIVE_CARD = (state: RootState, card: Card): void => {
 	state.cardsDeck.push(card.id)
 	state.game.currentTurn.cardsGiven.push(card.id)
 	state.myPlayerCardIds = state.myPlayerCardIds.filter(id => id !== card.id)
 	if (card.type === 'seven') state.game.currentTurn.newEffects.push('seven')
-	// if (card.type === 'ace') state.game.currentTurn.newEffects.push('ace')
+	if (card.type === 'ace') state.game.currentTurn.newEffects.push('ace')
 }
 
 export const RESET_MOVE = (state: RootState): void => {
