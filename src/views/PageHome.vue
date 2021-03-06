@@ -31,7 +31,6 @@ export default defineComponent({
 			if (await checkProfile()) {
 				const success = await ws.value.createGame()
 				if (success) {
-					console.log('GAME CREATED')
 					router.push({ name: 'pageWaitingRoom' }).catch(() => null)
 					// TODO implementovat else vetvu
 				}

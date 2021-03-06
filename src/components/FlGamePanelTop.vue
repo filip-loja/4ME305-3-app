@@ -2,7 +2,12 @@
 	<div style="display: block; width: 100%; height: 50px;"></div>
 	<ion-header class="fl-game-header">
 		<div class="fl-game-header__inner">
-			<div>{{ currentPlayerName }}</div>
+			<div>
+				<ion-button color="primary" @click="showPlayers">
+					<ion-icon :icon="people" />
+				</ion-button>
+			</div>
+			<div class="fl-game-header__name" :class="{'fl-my-turn': isMyTurn}">{{ currentPlayerName }}</div>
 			<div>
 				<ion-button color="danger" @click="exitGame">
 					<ion-icon :icon="exit" />
@@ -15,14 +20,16 @@
 <script lang="ts">
 import { defineComponent, computed } from 'vue'
 import { IonButton, IonHeader, IonIcon, alertController } from '@ionic/vue'
-import { exit } from 'ionicons/icons'
+import { exit, people } from 'ionicons/icons'
 import { useStore } from '@/store'
 export default defineComponent({
 	name: 'FlGamePanelTop',
+	emits: ['show-players'],
 	components: { IonButton, IonHeader, IonIcon },
-	setup () {
+	setup (props, { emit }) {
 		const store = useStore()
 		const currentPlayerName = computed<string>(() => store.getters['currentPlayerName'])
+		const isMyTurn = computed<boolean>(() => store.getters['isMyTurn'])
 		const exitGame = async () => {
 			const alert = await alertController
 				.create({
@@ -45,10 +52,15 @@ export default defineComponent({
 			return alert.present()
 		}
 
+		const showPlayers = () => emit('show-players')
+
 		return {
 			currentPlayerName,
+			isMyTurn,
 			exitGame,
-			exit
+			showPlayers,
+			exit,
+			people
 		}
 	}
 })
@@ -66,7 +78,7 @@ export default defineComponent({
 		width: 100%;
 		height: 50px;
 		background-color: white;
-		justify-content: flex-end;
+		justify-content: space-between;
 	}
 
 	.fl-game-header__inner ion-button {
@@ -74,6 +86,22 @@ export default defineComponent({
 		margin: 0;
 		--border-radius: 0;
 		--box-shadow: none;
+	}
+
+	.fl-game-header__name {
+		align-items: center;
+		justify-content: center;
+		flex: 1;
+		display: flex;
+		font-size: 1.2em;
+		font-weight: bold;
+		background-color: var(--ion-color-primary);
+		color: var(--ion-color-primary-contrast);
+	}
+
+	.fl-my-turn {
+		background-color: var(--ion-color-success);
+		color: var(--ion-color-success-contrast);
 	}
 
 </style>

@@ -24,11 +24,13 @@ export const CREATE_GAME = (state: RootState, payload: { id: string; creator: bo
 	if (!payload) {
 		state.game = null
 	} else {
+		console.log(payload.id)
 		state.game = {
 			id: payload.id,
 			started: false,
 			players: [],
 			creator: payload.creator,
+			playerOrder: [],
 			currentTurn: {
 				cardsGiven: [],
 				cardsTaken: [],
@@ -60,7 +62,7 @@ export const PREPARE_NEW_TURN = (state: RootState, payload: PayloadNextTurn): vo
 		state.cardsStack = state.cardsStack.filter(id => !payload.stackRemoved.includes(id))
 	}
 	if (payload.deckAdded.length) {
-		state.cardsDeck.unshift(...payload.deckAdded)
+		state.cardsDeck.push(...payload.deckAdded)
 	}
 	if (payload.deckRemoved.length) {
 		state.cardsDeck = state.cardsDeck.filter(id => !payload.deckRemoved.includes(id))
@@ -91,6 +93,7 @@ export const INITIALIZE_GAME = (state: RootState, initialState: GameInitialState
 	state.cardsDeck = initialState.deck
 	state.cardsStack = initialState.stack
 	state.cardColor = initialState.color
+	state.game.playerOrder = initialState.playerOrder
 }
 
 export const START_GAME = (state: RootState): void => {
@@ -108,7 +111,7 @@ export const CHANGE_CURRENT_COLOR = (state: RootState, color: CardColor): void =
 }
 
 export const GIVE_CARD = (state: RootState, card: Card): void => {
-	state.cardsDeck.unshift(card.id)
+	state.cardsDeck.push(card.id)
 	state.game.currentTurn.cardsGiven.push(card.id)
 	state.myPlayerCardIds = state.myPlayerCardIds.filter(id => id !== card.id)
 	if (card.type === 'seven') state.game.currentTurn.newEffects.push('seven')

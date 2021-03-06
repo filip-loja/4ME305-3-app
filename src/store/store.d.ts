@@ -46,6 +46,7 @@ export interface Game {
 	players: ClientPlayer[];
 	creator: boolean;
 	currentTurn: CurrentTurn;
+	playerOrder: string[];
 }
 
 export interface CurrentTurn {
@@ -61,6 +62,7 @@ export interface GameInitialState {
 	color: CardColor;
 	type: CardType;
 	currentPlayer: string;
+	playerOrder: string[];
 	cardAssignment: {
 		[key: string]: string[]
 	}

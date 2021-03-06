@@ -1,5 +1,5 @@
 
-import {Card, CardColor, CardType, RootState} from '@/store/store'
+import {Card, CardColor, CardType, ClientPlayer, RootState} from '@/store/store'
 
 export const isMyTurn = (state: RootState): boolean => {
 	return state.currentPlayerId === state.myPlayerId
@@ -14,7 +14,8 @@ export const myCards = (state: RootState): Card[] => {
 }
 
 export const deckUpperCard = (state: RootState): Card => {
-	return state.cardMap[state.cardsDeck[0]]
+	const id = state.cardsDeck[state.cardsDeck.length - 1]
+	return state.cardMap[id]
 }
 
 export const currentType = (state: RootState): CardType => {
@@ -25,8 +26,9 @@ export const currentColor = (state: RootState): CardColor => {
 	return state.game.currentTurn.newColor || state.cardColor
 }
 
-export const currentPlayerName = (state: RootState): string => {
-	return (state.game.players.find(player => player.id === state.currentPlayerId) || {}).name
+export const currentPlayerName = (state: RootState, getters: any): string => {
+	const name = (state.game.players.find(player => player.id === state.currentPlayerId) || {}).name
+	return getters.isMyTurn ? 'My turn' : `${name}'s turn`
 }
 
 export const cardsTaken = (state: RootState): boolean => {
@@ -35,6 +37,13 @@ export const cardsTaken = (state: RootState): boolean => {
 
 export const cardsGiven = (state: RootState): boolean => {
 	return state.game.currentTurn.cardsGiven.length > 0
+}
+
+export const playersOrdered = (state: RootState): ClientPlayer[] => {
+	const ids = state.game.playerOrder
+	const players = state.game.players.slice()
+	players.sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id))
+	return players
 }
 
 export const canResetMove = (state: RootState, getters: any): boolean => {

@@ -22,7 +22,7 @@ export class WsConnection {
 
 		this.socket.on('game-player-added', (newPlayer: ClientPlayer) => {
 			this.store.commit('ADD_PLAYERS', [newPlayer])
-			console.log('Player added: ', newPlayer)
+			// console.log('Player added: ', newPlayer)
 		})
 
 		this.socket.on('game-player-removed', (playerId: string) => this.store.commit('REMOVE_PLAYER', playerId))
@@ -94,7 +94,6 @@ export class WsConnection {
 		this.socket.emit('game-start', gameId)
 	}
 
-	// TODO implement BE
 	async commitGameTurn (): Promise<string> {
 		try {
 			const resp = await this.syncEmit('game-turn-commit', {
@@ -103,7 +102,6 @@ export class WsConnection {
 			if (resp.success) {
 				this.store.commit('COMMIT_CURRENT_TURN')
 				this.store.commit('SET_CURRENT_PLAYER_ID', resp.nextPlayerId)
-				console.log('TURN COMMITTED')
 				return Promise.resolve(null)
 			} else {
 				return Promise.resolve(resp.message)
