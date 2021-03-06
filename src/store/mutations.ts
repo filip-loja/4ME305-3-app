@@ -3,7 +3,7 @@ import {
 	Card,
 	CardColor,
 	ClientPlayer,
-	GameInitialState, PayloadNextTurn,
+	GameInitialState, CommittedTurn,
 	RootState
 } from '@/store/store'
 import {WsConnection} from '@/ws/WsConnection'
@@ -14,10 +14,6 @@ export const SET_CONNECTION = (state: RootState, wsConnection: WsConnection): vo
 
 export const SET_PLAYER_ID = (state: RootState, playerId: string): void => {
 	state.myPlayerId = playerId
-}
-
-export const SET_CURRENT_PLAYER_ID = (state: RootState, playerId: string): void => {
-	state.currentPlayerId = playerId
 }
 
 export const CREATE_GAME = (state: RootState, payload: { id: string; creator: boolean; qr: string }): void => {
@@ -55,22 +51,25 @@ export const COMMIT_CURRENT_TURN = (state: RootState): void => {
 	}
 }
 
-export const PREPARE_NEW_TURN = (state: RootState, payload: PayloadNextTurn): void => {
-	if (payload.stackAdded.length) {
-		state.cardsStack.push(...payload.stackAdded)
+export const PREPARE_NEW_TURN = (state: RootState, payload: CommittedTurn): void => {
+	if (state.myPlayerId !== payload.lastPlayer) {
+		console.log('FULL PREPARE')
+		if (payload.stackRemoved.length) {
+			state.cardsStack = state.cardsStack.filter(id => !payload.stackRemoved.includes(id))
+		}
+		if (payload.deckAdded.length) {
+			state.cardsDeck.push(...payload.deckAdded)
+		}
+		state.cardColor = payload.color
+		state.activeEffects = payload.effects
 	}
-	if (payload.stackRemoved.length) {
-		state.cardsStack = state.cardsStack.filter(id => !payload.stackRemoved.includes(id))
-	}
-	if (payload.deckAdded.length) {
-		state.cardsDeck.push(...payload.deckAdded)
-	}
-	if (payload.deckRemoved.length) {
-		state.cardsDeck = state.cardsDeck.filter(id => !payload.deckRemoved.includes(id))
-	}
-	state.cardColor = payload.color
-	state.activeEffects = payload.effects
+
 	state.currentPlayerId = payload.currentPlayer
+	if (payload.reshuffle.length) {
+		console.log('RESHUFFLE')
+		state.cardsStack.push(...payload.reshuffle)
+		state.cardsDeck = state.cardsDeck.filter(id => !payload.reshuffle.includes(id))
+	}
 }
 
 export const ADD_PLAYERS = (state: RootState, newPlayers: ClientPlayer[]): void => {

@@ -1,6 +1,6 @@
 import { Socket } from 'socket.io-client/build/socket'
 import { Store } from 'vuex'
-import { ClientPlayer, GameInitialState, PayloadNextTurn, StoreDef } from '@/store/store'
+import { ClientPlayer, GameInitialState, CommittedTurn, StoreDef } from '@/store/store'
 import { io } from 'socket.io-client'
 import { resetGame, withTimeout } from '@/utils'
 import store from '@/store'
@@ -29,7 +29,7 @@ export class WsConnection {
 		this.socket.on('game-player-removed', (playerId: string) => this.store.commit('REMOVE_PLAYER', playerId))
 
 		this.socket.on('game-started', (initialState: GameInitialState) => this.store.dispatch('initGame', initialState))
-		this.socket.on('game-new-turn', (payload: PayloadNextTurn) => this.store.commit('PREPARE_NEW_TURN', payload))
+		this.socket.on('game-new-turn', (payload: CommittedTurn) => this.store.commit('PREPARE_NEW_TURN', payload))
 
 	}
 
@@ -104,7 +104,6 @@ export class WsConnection {
 			})
 			if (resp.success) {
 				this.store.commit('COMMIT_CURRENT_TURN')
-				this.store.commit('SET_CURRENT_PLAYER_ID', resp.nextPlayerId)
 				return Promise.resolve(null)
 			} else {
 				return Promise.resolve(resp.message)

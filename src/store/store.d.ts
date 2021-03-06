@@ -69,12 +69,12 @@ export interface GameInitialState {
 	}
 }
 
-export interface PayloadNextTurn {
-	stackAdded: string[];
+export interface CommittedTurn {
 	stackRemoved: string[];
 	deckAdded: string[];
-	deckRemoved: string[];
 	color: CardColor;
 	effects: CardEffect[];
 	currentPlayer: string;
+	lastPlayer: string;
+	reshuffle: string[];
 }
