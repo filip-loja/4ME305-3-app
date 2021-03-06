@@ -1,5 +1,5 @@
 import { ActionContext } from 'vuex'
-import { Card, CardColor, GameInitialState, RootState } from '@/store/store'
+import { Card, CardColor, RoundInitialState, RootState } from '@/store/store'
 import {changeColor, errorAlert} from '@/utils'
 import router from '@/router'
 import { WsConnection } from '@/ws/WsConnection'
@@ -17,11 +17,12 @@ function canGiveMoreCards (upperCard: Card, newCard: Card): boolean {
 	return upperCard.type === newCard.type
 }
 
-export const initGame = (context: A, initialState: GameInitialState) => {
-	context.commit('INITIALIZE_GAME', initialState)
-	context.commit('START_GAME', initialState)
-	router.push({ name: 'pageGameTable' }).catch(() => null)
-	console.log(initialState)
+export const initRound = (context: A, initialState: RoundInitialState) => {
+	context.commit('INIT_ROUND', initialState)
+	if (!context.state.game.started) {
+		context.commit('START_GAME', initialState)
+		router.push({ name: 'pageGameTable' }).catch(() => null)
+	}
 }
 
 export const takeCard = async (context: A): Promise<any> => {

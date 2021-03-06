@@ -43,6 +43,7 @@ export interface ClientPlayer {
 export interface Game {
 	id: string;
 	qr: string;
+	round: number;
 	started: boolean;
 	players: ClientPlayer[];
 	creator: boolean;
@@ -57,13 +58,15 @@ export interface CurrentTurn {
 	newEffects: CardEffect[];
 }
 
-export interface GameInitialState {
+export interface RoundInitialState {
 	stack: string[];
 	deck: string[];
 	color: CardColor;
 	type: CardType;
 	currentPlayer: string;
 	playerOrder: string[];
+	effects: CardEffect[];
+	roundNumber: number;
 	cardAssignment: {
 		[key: string]: string[]
 	}

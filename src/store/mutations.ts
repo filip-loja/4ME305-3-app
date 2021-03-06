@@ -3,7 +3,7 @@ import {
 	Card,
 	CardColor,
 	ClientPlayer,
-	GameInitialState, CommittedTurn,
+	RoundInitialState, CommittedTurn,
 	RootState
 } from '@/store/store'
 import {WsConnection} from '@/ws/WsConnection'
@@ -25,6 +25,7 @@ export const CREATE_GAME = (state: RootState, payload: { id: string; creator: bo
 			id: payload.id,
 			qr: payload.qr,
 			started: false,
+			round: 1,
 			players: [],
 			creator: payload.creator,
 			playerOrder: [],
@@ -88,13 +89,15 @@ export const REMOVE_PLAYER = (state: RootState, id: string): void => {
 	}
 }
 
-export const INITIALIZE_GAME = (state: RootState, initialState: GameInitialState): void => {
+export const INIT_ROUND = (state: RootState, initialState: RoundInitialState): void => {
 	state.currentPlayerId = initialState.currentPlayer
 	state.myPlayerCardIds = initialState.cardAssignment[state.myPlayerId]
 	state.cardsDeck = initialState.deck
 	state.cardsStack = initialState.stack
 	state.cardColor = initialState.color
 	state.game.playerOrder = initialState.playerOrder
+	state.game.round = initialState.roundNumber
+	state.activeEffects = initialState.effects
 }
 
 export const START_GAME = (state: RootState): void => {
