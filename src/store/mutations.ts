@@ -70,6 +70,7 @@ export const PREPARE_NEW_TURN = (state: RootState, payload: CommittedTurn): void
 		state.cardsStack.push(...payload.reshuffle)
 		state.cardsDeck = state.cardsDeck.filter(id => !payload.reshuffle.includes(id))
 	}
+	console.log(state.activeEffects)
 }
 
 export const ADD_PLAYERS = (state: RootState, newPlayers: ClientPlayer[]): void => {
@@ -104,10 +105,15 @@ export const TAKE_CARDS = (state: RootState, cardsNum: number): void => {
 	const cardIds = state.cardsStack.splice(0, cardsNum)
 	state.myPlayerCardIds.push(...cardIds)
 	state.game.currentTurn.cardsTaken.push(...cardIds)
+	state.activeEffects = []
 }
 
 export const CHANGE_CURRENT_COLOR = (state: RootState, color: CardColor): void => {
 	state.game.currentTurn.newColor = color
+}
+
+export const PRESERVE_EFFECTS = (state: RootState): void => {
+	state.game.currentTurn.newEffects.push(...state.activeEffects)
 }
 
 export const GIVE_CARD = (state: RootState, card: Card): void => {
@@ -115,7 +121,7 @@ export const GIVE_CARD = (state: RootState, card: Card): void => {
 	state.game.currentTurn.cardsGiven.push(card.id)
 	state.myPlayerCardIds = state.myPlayerCardIds.filter(id => id !== card.id)
 	if (card.type === 'seven') state.game.currentTurn.newEffects.push('seven')
-	if (card.type === 'ace') state.game.currentTurn.newEffects.push('ace')
+	// if (card.type === 'ace') state.game.currentTurn.newEffects.push('ace')
 }
 
 export const RESET_MOVE = (state: RootState): void => {

@@ -1,5 +1,5 @@
 
-import {Card, CardColor, CardType, ClientPlayer, RootState} from '@/store/store'
+import {Card, CardColor, CardEffect, CardType, ClientPlayer, RootState} from '@/store/store'
 
 export const isMyTurn = (state: RootState): boolean => {
 	return state.currentPlayerId === state.myPlayerId
@@ -44,6 +44,20 @@ export const playersOrdered = (state: RootState): ClientPlayer[] => {
 	const players = state.game.players.slice()
 	players.sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id))
 	return players
+}
+
+export const pendingEffect = (state: RootState): CardEffect => {
+	if (state.activeEffects.length) {
+		return state.activeEffects[0]
+	}
+	return null
+}
+
+export const cardsToTake = (state: RootState, getters: any): number => {
+	if (getters.pendingEffect === 'seven') {
+		return 3 * state.activeEffects.length
+	}
+	return 1
 }
 
 export const canResetMove = (state: RootState, getters: any): boolean => {

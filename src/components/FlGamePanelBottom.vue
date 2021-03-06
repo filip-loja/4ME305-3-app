@@ -3,13 +3,6 @@
 		<ion-button :disabled="!canResetMove" @click="resetMove">Cancel</ion-button>
 		<ion-button :disabled="!canFinishRound" @click="finishMove">Confirm</ion-button>
 	</fl-buttons-bottom>
-<!--	<div style="display: block; width: 100%; height: 50px;"></div>-->
-<!--	<ion-footer class="fl-footer">-->
-<!--		<div class="fl-footer__inner">-->
-<!--			<ion-button :disabled="!canResetMove" @click="resetMove">Cancel</ion-button>-->
-<!--			<ion-button :disabled="!canFinishRound" @click="finishMove">Confirm</ion-button>-->
-<!--		</div>-->
-<!--	</ion-footer>-->
 </template>
 
 <script lang="ts">
@@ -41,24 +34,5 @@ export default defineComponent({
 </script>
 
 <style scoped>
-
-	/*.fl-footer {*/
-	/*	position: fixed;*/
-	/*	bottom: 0;*/
-	/*}*/
-
-	/*.fl-footer__inner {*/
-	/*	display: flex;*/
-	/*	width: 100%;*/
-	/*	height: 50px;*/
-	/*	background-color: white;*/
-	/*}*/
-
-	/*.fl-footer__inner ion-button {*/
-	/*	margin: 0;*/
-	/*	width: 50%;*/
-	/*	height: 100%;*/
-	/*	--border-radius: 0;*/
-	/*}*/
 
 </style>

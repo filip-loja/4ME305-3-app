@@ -25,22 +25,27 @@ export const initGame = (context: A, initialState: GameInitialState) => {
 }
 
 export const takeCard = async (context: A): Promise<any> => {
+	if (context.getters['pendingEffect'] === 'ace') {
+		return await errorAlert('"Ace" card is in effect. You have to play another "Ace" or wait one round.')
+	}
 	if (context.getters.cardsTaken) {
 		return await errorAlert('You cannot take more cards in this round!')
 	}
 	if (context.getters.cardsGiven) {
 		return await errorAlert('You cannot give away cards and take cards in one turn!')
 	}
-
+	// TODO kontrola ci su karty v stacku
 	// TODO zohladnit efekty
-	const cardsToTake = 1
-	context.commit('TAKE_CARDS', cardsToTake)
+	context.commit('TAKE_CARDS', context.getters['cardsToTake'])
 	return null
 }
 
 export const giveCard = async (context: A, currentCard: Card): Promise<any> => {
 	if (context.getters['cardsTaken']) {
 		return await errorAlert('You cannot give away cards after you have taken cards from stack!')
+	}
+	if (context.getters['pendingEffect'] === 'seven' && currentCard.type !== 'seven') {
+		return await errorAlert('The player before you played "seven". You need to take cards or play another "seven".')
 	}
 
 	const upperCard = context.getters['deckUpperCard']
@@ -74,6 +79,7 @@ export const commitGameTurn = async (context: A): Promise<any> => {
 	if (!context.getters['canFinishRound']) {
 		return await errorAlert('You did not perform any action!')
 	}
+	context.commit('PRESERVE_EFFECTS')
 	await context.state.wsConnection.commitGameTurn()
 }
 
