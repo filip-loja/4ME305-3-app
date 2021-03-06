@@ -20,14 +20,12 @@
 
 <script lang="ts">
 import { computed, defineComponent, ref } from 'vue'
-import { IonButton, toastController, IonList, IonItem, IonLabel, IonInput } from '@ionic/vue'
+import { IonButton, IonList, IonItem, IonLabel, IonInput } from '@ionic/vue'
 import { useStore } from '@/store'
 import { useRouter } from 'vue-router'
 import { WsConnection } from '@/ws/WsConnection'
 import { errorAlert } from '@/utils'
 import LayoutMain from '@/layouts/LayoutMain.vue'
-import { Plugins } from '@capacitor/core'
-const { BarcodeScanner } = Plugins
 export default defineComponent({
 	name: 'PageJoinGame',
 	components: { LayoutMain, IonButton, IonList, IonItem, IonLabel, IonInput },
@@ -49,12 +47,7 @@ export default defineComponent({
 		}
 
 		const scanQrCode = () => {
-			BarcodeScanner.hideBackground()
-			BarcodeScanner.startScan().then((result: any) => {
-				if (result.hasContent) {
-					gameId.value = result.content
-				}
-			}).catch((e: any) => console.log(e))
+
 		}
 
 		return {
