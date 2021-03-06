@@ -16,6 +16,7 @@
     "array-shuffle": "^2.0.0",
     "core-js": "^3.6.5",
     "ionicons": "^5.5.0",
+    "qrcode": "^1.4.4",
     "socket.io-client": "^3.1.1",
     "vue": "^3.0.0-0",
     "vue-router": "^4.0.0-0",
@@ -24,6 +25,7 @@
   "devDependencies": {
     "@capacitor/cli": "2.4.6",
     "@types/jest": "^24.0.19",
+    "@types/qrcode": "^1.4.0",
     "@typescript-eslint/eslint-plugin": "^2.33.0",
     "@typescript-eslint/parser": "^2.33.0",
     "@vue/cli-plugin-babel": "~4.5.0",

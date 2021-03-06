@@ -42,6 +42,7 @@ export interface ClientPlayer {
 
 export interface Game {
 	id: string;
+	qr: string;
 	started: boolean;
 	players: ClientPlayer[];
 	creator: boolean;

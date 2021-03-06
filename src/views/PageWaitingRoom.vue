@@ -5,6 +5,7 @@
 				{{ game.id }}
 			</ion-card-content>
 		</ion-card>
+		<img :src="game.qr" class="fl-qr" />
 		<ion-card>
 			<ion-card-content>
 				<ion-list>
@@ -14,15 +15,15 @@
 				</ion-list>
 			</ion-card-content>
 		</ion-card>
-		<div>
+		<fl-buttons-bottom>
 			<template v-if="game.creator">
-				<ion-button :disabled="!canStart" @click="startGame">Start game</ion-button>
 				<ion-button @click="leaveGame">Cancel game</ion-button>
+				<ion-button :disabled="!canStart" @click="startGame">Start game</ion-button>
 			</template>
 			<template v-else>
 				<ion-button @click="leaveGame">Leave game</ion-button>
 			</template>
-		</div>
+		</fl-buttons-bottom>
 	</layout-main>
 </template>
 
@@ -34,9 +35,10 @@ import { Game } from '@/store/store'
 import { IonButton, IonList, IonItem, IonLabel, IonCard, IonCardContent } from '@ionic/vue'
 import { WsConnection } from '@/ws/WsConnection'
 import { errorAlert, resetGame } from '@/utils'
+import FlButtonsBottom from '@/components/FlButtonsBottom.vue'
 export default defineComponent({
 	name: 'PageWaitingRoom',
-	components: { LayoutMain, IonButton, IonList, IonItem, IonLabel, IonCard, IonCardContent },
+	components: { LayoutMain, IonButton, IonList, IonItem, IonLabel, IonCard, IonCardContent, FlButtonsBottom },
 	setup () {
 		const store = useStore()
 		const game = computed<Game>(() => store.state.game)
@@ -72,5 +74,11 @@ export default defineComponent({
 </script>
 
 <style scoped>
+
+	.fl-qr {
+		display: block;
+		width: 65%;
+		margin: 0 auto;
+	}
 
 </style>

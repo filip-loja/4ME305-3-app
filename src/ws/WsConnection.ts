@@ -4,6 +4,7 @@ import { ClientPlayer, GameInitialState, PayloadNextTurn, StoreDef } from '@/sto
 import { io } from 'socket.io-client'
 import { resetGame, withTimeout } from '@/utils'
 import store from '@/store'
+import QRCode from 'qrcode'
 
 export class WsConnection {
 
@@ -50,7 +51,8 @@ export class WsConnection {
 	async createGame (): Promise<boolean> {
 		try {
 			const id = await this.syncEmit('game-create')
-			this.store.commit('CREATE_GAME', { id, creator: true })
+			const qr = await QRCode.toDataURL(id)
+			this.store.commit('CREATE_GAME', { id, qr, creator: true })
 			return Promise.resolve(true)
 		} catch (e) {
 			console.log(e)
@@ -62,7 +64,8 @@ export class WsConnection {
 		try {
 			const resp = await this.syncEmit('game-join', gameId)
 			if (resp.success) {
-				this.store.commit('CREATE_GAME', { id: gameId, creator: false })
+				const qr = await QRCode.toDataURL(gameId)
+				this.store.commit('CREATE_GAME', { qr, id: gameId, creator: false })
 				this.store.commit('ADD_PLAYERS', resp.players)
 				return Promise.resolve(null)
 			} else {

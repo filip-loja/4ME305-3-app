@@ -20,13 +20,14 @@ export const SET_CURRENT_PLAYER_ID = (state: RootState, playerId: string): void 
 	state.currentPlayerId = playerId
 }
 
-export const CREATE_GAME = (state: RootState, payload: { id: string; creator: boolean }): void => {
+export const CREATE_GAME = (state: RootState, payload: { id: string; creator: boolean; qr: string }): void => {
 	if (!payload) {
 		state.game = null
 	} else {
 		console.log(payload.id)
 		state.game = {
 			id: payload.id,
+			qr: payload.qr,
 			started: false,
 			players: [],
 			creator: payload.creator,
