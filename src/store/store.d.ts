@@ -5,6 +5,7 @@ export interface RootState {
 	wsConnection: WsConnection;
 	game: Game;
 	cardMap: CardMap;
+	cardIdOrder: string[];
 	cardsStack: string[];
 	cardsDeck: string[];
 	cardColor: CardColor;

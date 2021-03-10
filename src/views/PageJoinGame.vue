@@ -48,6 +48,7 @@ export default defineComponent({
 				if (error) {
 					errorAlert(error, 'bottom')
 				} else {
+					gameId.value = ''
 					router.push({ name: 'pageWaitingRoom' }).catch(() => null)
 				}
 			}

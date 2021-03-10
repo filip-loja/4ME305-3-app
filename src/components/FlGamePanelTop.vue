@@ -44,8 +44,7 @@ export default defineComponent({
 						},
 						{
 							text: 'Yes',
-							// TODO realne implementovat
-							handler: () => location.reload()
+							handler: () => store.dispatch('resetState')
 						}
 					]
 				})

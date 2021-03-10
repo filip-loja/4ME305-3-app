@@ -1,12 +1,10 @@
 <template>
 	<fl-table class="fl-table-bottom">
-		<ion-grid>
-			<ion-row>
-				<ion-col size="3" v-for="card in myCards" :key="card.id">
-					<fl-card @click="giveCard(card)" :model="card" />
-				</ion-col>
-			</ion-row>
-		</ion-grid>
+		<transition-group class="fl-card-table" name="fl-card-transition" tag="div">
+			<div class="fl-card-wrapper list-complete-item" v-for="card in myCards" :key="card.id">
+				<fl-card @click="giveCard(card)" :model="card" :key="`card${card.id}`" />
+			</div>
+		</transition-group>
 	</fl-table>
 </template>
 
@@ -37,6 +35,33 @@ export default defineComponent({
 
 	.fl-table-bottom {
 		min-height: calc(70vh - 100px);
+	}
+
+	.fl-card-table {
+		display: flex;
+		flex-flow: row wrap;
+		width: 100%;
+		box-sizing: border-box;
+		position: relative;
+	}
+
+	.fl-card-wrapper {
+		display: block;
+		box-sizing: border-box;
+		width: 25%;
+		padding: 5px;
+		transition: all 0.3s ease;
+	}
+
+	.fl-card-transition-enter-from,
+	.fl-card-transition-leave-to {
+		opacity: 0;
+		transform: translateY(30px);
+		perspective: 1000px;
+	}
+
+	.fl-card-transition-leave-active {
+		position: absolute;
 	}
 
 </style>

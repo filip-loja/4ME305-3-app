@@ -7,7 +7,8 @@ export const isMyTurn = (state: RootState): boolean => {
 
 export const myCards = (state: RootState): Card[] => {
 	const resp: Card[] = []
-	for (const cardId of state.myPlayerCardIds) {
+	const myCardIds = state.myPlayerCardIds.slice().sort((a, b) => Number(a) - Number(b))
+	for (const cardId of myCardIds) {
 		resp.push(state.cardMap[cardId])
 	}
 	return resp
