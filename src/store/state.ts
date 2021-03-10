@@ -2,13 +2,13 @@ import { RootState } from '@/store/store'
 import cardMap from '@/cards'
 
 export const rootState: RootState = {
-	activeEffects: [],
-	wsConnection: null,
-	game: null,
 	cardMap: cardMap,
-	cardColor: null,
-	currentPlayerId: null,
+	wsConnection: null,
 	myPlayerId: null,
+	game: null,
+	currentPlayerId: null,
+	cardColor: null,
+	activeEffects: [],
 	myPlayerCardIds: [],
 	cardsDeck: [],
 	cardsStack: []

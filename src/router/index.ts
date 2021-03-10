@@ -50,6 +50,18 @@ const routes: Array<RouteRecordRaw> = [
 			}
 		}
 	},
+	{
+		path: '/game-result',
+		component: () => import('@/views/PageGameResult.vue'),
+		name: 'pageGameResult',
+		beforeEnter: () => {
+			if (store.state.game && store.state.game.finished) {
+				return true
+			} else {
+				return { name: 'pageHome' }
+			}
+		}
+	}
 	// {
 	// 	path: '/blank',
 	// 	component: () => import('@/views/Blank.vue')

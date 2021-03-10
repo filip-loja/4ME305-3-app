@@ -1,20 +1,11 @@
 <template>
 	<layout-main title="Waiting room" v-if="game">
-		<ion-card>
-			<ion-card-content class="ion-text-center">
-				{{ game.id }}
-			</ion-card-content>
-		</ion-card>
+		<div class="fl-game-code">
+			<div class="fl-game-code__id">{{ game.id }}</div>
+			<div class="fl-game-code__title">Game code</div>
+		</div>
 		<img :src="game.qr" class="fl-qr" />
-		<ion-card>
-			<ion-card-content>
-				<ion-list>
-					<ion-item v-for="(player, index) in game.players" :key="player.id">
-						<ion-label>{{ index + 1 }} {{ player.name }}</ion-label>
-					</ion-item>
-				</ion-list>
-			</ion-card-content>
-		</ion-card>
+		<fl-player-list :players="game.players" />
 		<fl-buttons-bottom>
 			<template v-if="game.creator">
 				<ion-button @click="leaveGame">Cancel game</ion-button>
@@ -32,13 +23,14 @@ import { defineComponent, computed, ref } from 'vue'
 import LayoutMain from '@/layouts/LayoutMain.vue'
 import { useStore } from '@/store'
 import { Game } from '@/store/store'
-import { IonButton, IonList, IonItem, IonLabel, IonCard, IonCardContent } from '@ionic/vue'
+import { IonButton } from '@ionic/vue'
 import { WsConnection } from '@/ws/WsConnection'
-import { errorAlert, resetGame } from '@/utils'
+import { errorAlert } from '@/utils'
 import FlButtonsBottom from '@/components/FlButtonsBottom.vue'
+import FlPlayerList from '@/components/FlPlayerList.vue'
 export default defineComponent({
 	name: 'PageWaitingRoom',
-	components: { LayoutMain, IonButton, IonList, IonItem, IonLabel, IonCard, IonCardContent, FlButtonsBottom },
+	components: { LayoutMain, FlPlayerList, FlButtonsBottom, IonButton },
 	setup () {
 		const store = useStore()
 		const game = computed<Game>(() => store.state.game)
@@ -52,7 +44,7 @@ export default defineComponent({
 			if (error) {
 				errorAlert(error, 'bottom')
 			} else {
-				resetGame()
+				store.dispatch('resetState')
 			}
 		}
 
@@ -79,6 +71,24 @@ export default defineComponent({
 		display: block;
 		width: 65%;
 		margin: 0 auto;
+	}
+
+	.fl-game-code {
+		display: block;
+		width: 100%;
+		text-align: center;
+	}
+
+	.fl-game-code__id {
+		font-size: 28px;
+		font-weight: bold;
+		font-family: monospace;
+		padding-bottom: 5px;
+		color: var(--ion-color-success-shade);
+	}
+
+	.fl-game-code__title {
+		color: var(--ion-color-medium-shade);
 	}
 
 </style>

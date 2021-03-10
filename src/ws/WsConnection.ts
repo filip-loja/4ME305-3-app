@@ -1,8 +1,8 @@
 import { Socket } from 'socket.io-client/build/socket'
 import { Store } from 'vuex'
-import { ClientPlayer, RoundInitialState, CommittedTurn, StoreDef } from '@/store/store'
+import {ClientPlayer, RoundInitialState, CommittedTurn, StoreDef, GameReport} from '@/store/store'
 import { io } from 'socket.io-client'
-import { resetGame, withTimeout } from '@/utils'
+import { withTimeout } from '@/utils'
 import store from '@/store'
 import QRCode from 'qrcode'
 
@@ -16,10 +16,7 @@ export class WsConnection {
 		this.createSocket()
 
 		this.socket.on('connection-established', (playerId: string) => this.store.commit('SET_PLAYER_ID', playerId))
-		this.socket.on('reset', (reason: string) => {
-			console.log(reason)
-			resetGame()
-		})
+		this.socket.on('reset', (reason: string) => this.store.dispatch('resetState', reason))
 
 		this.socket.on('game-player-added', (newPlayer: ClientPlayer) => {
 			this.store.commit('ADD_PLAYERS', [newPlayer])
@@ -30,7 +27,7 @@ export class WsConnection {
 
 		this.socket.on('game-round-new', (initialState: RoundInitialState) => this.store.dispatch('initRound', initialState))
 		this.socket.on('game-new-turn', (payload: CommittedTurn) => this.store.commit('PREPARE_NEW_TURN', payload))
-		this.socket.on('game-finish', () => alert('FINISH'))
+		this.socket.on('game-finish', (result: GameReport) => this.store.dispatch('finishRound', result))
 
 	}
 

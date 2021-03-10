@@ -45,10 +45,12 @@ export interface Game {
 	qr: string;
 	round: number;
 	started: boolean;
+	finished: boolean;
 	players: ClientPlayer[];
 	creator: boolean;
 	currentTurn: CurrentTurn;
 	playerOrder: string[];
+	result: GameReport;
 }
 
 export interface CurrentTurn {
@@ -80,4 +82,18 @@ export interface CommittedTurn {
 	currentPlayer: string;
 	lastPlayer: string;
 	reshuffle: string[];
+}
+
+export interface GameReport {
+	time: number;
+	rounds: number;
+	players: {
+		[key: string]: GameReportScore;
+	}
+}
+
+export interface GameReportScore {
+	id: string;
+	name: string;
+	score: number;
 }

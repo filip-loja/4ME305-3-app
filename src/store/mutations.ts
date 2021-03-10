@@ -4,12 +4,22 @@ import {
 	CardColor,
 	ClientPlayer,
 	RoundInitialState, CommittedTurn,
-	RootState
+	RootState, GameReport
 } from '@/store/store'
 import {WsConnection} from '@/ws/WsConnection'
 
 export const SET_CONNECTION = (state: RootState, wsConnection: WsConnection): void => {
 	state.wsConnection = wsConnection
+}
+
+export const RESET_STATE = (state: RootState): void => {
+	state.game = null
+	state.currentPlayerId = null
+	state.cardColor = null
+	state.activeEffects = []
+	state.myPlayerCardIds = []
+	state.cardsDeck = []
+	state.cardsStack = []
 }
 
 export const SET_PLAYER_ID = (state: RootState, playerId: string): void => {
@@ -25,6 +35,7 @@ export const CREATE_GAME = (state: RootState, payload: { id: string; creator: bo
 			id: payload.id,
 			qr: payload.qr,
 			started: false,
+			finished: false,
 			round: 1,
 			players: [],
 			creator: payload.creator,
@@ -34,7 +45,8 @@ export const CREATE_GAME = (state: RootState, payload: { id: string; creator: bo
 				cardsTaken: [],
 				newEffects: [],
 				newColor: null
-			}
+			},
+			result: null
 		}
 	}
 }
@@ -102,6 +114,12 @@ export const INIT_ROUND = (state: RootState, initialState: RoundInitialState): v
 
 export const START_GAME = (state: RootState): void => {
 	state.game.started = true
+}
+
+export const FINISH_GAME = (state: RootState, result: GameReport): void => {
+	state.game.finished = true
+	state.game.result = result
+	state.currentPlayerId = null
 }
 
 export const TAKE_CARDS = (state: RootState, cardsNum: number): void => {

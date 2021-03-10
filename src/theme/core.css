@@ -18,3 +18,7 @@ ion-toolbar {
     font-weight: bold;
     transform: translateY(-50px);
 }
+
+.fl-round-toast::part(message) {
+    line-height: unset !important;
+}

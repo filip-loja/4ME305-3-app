@@ -1,5 +1,5 @@
 
-import {Card, CardColor, CardEffect, CardType, ClientPlayer, RootState} from '@/store/store'
+import {Card, CardColor, CardEffect, CardType, ClientPlayer, GameReportScore, RootState} from '@/store/store'
 
 export const isMyTurn = (state: RootState): boolean => {
 	return state.currentPlayerId === state.myPlayerId
@@ -27,6 +27,7 @@ export const currentColor = (state: RootState): CardColor => {
 }
 
 export const currentPlayerName = (state: RootState, getters: any): string => {
+	if (!state.game) return null
 	const name = (state.game.players.find(player => player.id === state.currentPlayerId) || {}).name
 	return getters.isMyTurn ? 'My turn' : `${name}'s turn`
 }
@@ -58,6 +59,16 @@ export const cardsToTake = (state: RootState, getters: any): number => {
 		return 3 * state.activeEffects.length
 	}
 	return 1
+}
+
+export const userScoreOrder = (state: RootState): GameReportScore[] => {
+	return Object.values(state.game.result.players).sort((a, b) => b.score - a.score)
+}
+
+export const timePlayed = (state: RootState): string => {
+	const s = state.game.result.time
+	const pad = (n: any, z = 2) => ('00' + n).slice(-z);
+	return pad(s/3.6e6|0) + ':' + pad((s%3.6e6)/6e4 | 0) + ':' + pad((s%6e4)/1000|0)
 }
 
 export const canResetMove = (state: RootState, getters: any): boolean => {

@@ -1,5 +1,5 @@
 import { ActionContext } from 'vuex'
-import { Card, CardColor, RoundInitialState, RootState } from '@/store/store'
+import {Card, CardColor, RoundInitialState, RootState, GameReport} from '@/store/store'
 import {changeColor, errorAlert} from '@/utils'
 import router from '@/router'
 import { WsConnection } from '@/ws/WsConnection'
@@ -31,6 +31,28 @@ export const initRound = async (context: A, initialState: RoundInitialState) => 
 			duration: 1500
 		})
 	return toast.present()
+}
+
+export const finishRound = async (context: A, result: GameReport) => {
+	const toast = await toastController
+		.create({
+			message: 'Game finished',
+			position: 'middle',
+			cssClass: 'fl-round-toast',
+			duration: 1500
+		})
+	await toast.present()
+	context.commit('FINISH_GAME', result)
+	router.push({ name: 'pageGameResult' }).catch(() => null)
+}
+
+export const resetState = async (context: A, reason: string = null) => {
+	if (reason) {
+		console.log(reason)
+	}
+	await context.state.wsConnection.leaveGame()
+	router.push({ name: 'pageHome' }).catch(() => null)
+	context.commit('RESET_STATE')
 }
 
 export const takeCard = async (context: A): Promise<any> => {
