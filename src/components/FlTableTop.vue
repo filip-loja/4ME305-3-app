@@ -7,7 +7,9 @@
 				<img :src="colorIcon" />
 			</div>
 			<div class="fl-table-top__preview">
-				<fl-card :model="upperCard" />
+				<transition name="bounce" mode="out-in">
+					<fl-card :model="upperCard" :key="upperCard.id" />
+				</transition>
 			</div>
 		</div>
 	</fl-table>
@@ -90,6 +92,28 @@ export default defineComponent({
 
 	.fl-table-top__preview {
 		width: 90px;
+	}
+
+	.bounce-enter-active {
+		animation: bounce-in .3s ease-out both;
+		perspective: 1000px;
+	}
+
+	.bounce-leave-active {
+		animation: bounce-in .3s reverse ease-in both;
+		perspective: 1000px;
+	}
+
+	@keyframes bounce-in {
+		0% {
+			transform: scale(0);
+		}
+		50% {
+			transform: scale(1.25);
+		}
+		100% {
+			transform: scale(1);
+		}
 	}
 
 </style>
