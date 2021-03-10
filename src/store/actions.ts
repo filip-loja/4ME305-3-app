@@ -90,7 +90,9 @@ export const commitGameTurn = async (context: A): Promise<any> => {
 	if (!context.getters['canFinishRound']) {
 		return await errorAlert('You did not perform any action!')
 	}
-	context.commit('WAIT_TURN')
+	if (context.getters['turnWaited']) {
+		context.commit('WAIT_TURN')
+	}
 	context.commit('PRESERVE_EFFECTS')
 	await context.state.wsConnection.commitGameTurn()
 }
