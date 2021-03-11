@@ -13,7 +13,7 @@
 			</div>
 		</template>
 		<fl-buttons-bottom>
-			<ion-button :disabled="!canPlayAgain" @click="playAgain">Play again</ion-button>
+			<ion-button @click="playAgain">Play again</ion-button>
 			<ion-button @click="exitGame">Exit</ion-button>
 		</fl-buttons-bottom>
 	</layout-main>
@@ -23,30 +23,63 @@
 import { defineComponent, computed } from 'vue'
 import { IonButton } from '@ionic/vue'
 import { useStore } from '@/store'
-import { GameReportScore } from '@/store/store'
+import { useRouter } from 'vue-router'
+import {Game, GameReportScore} from '@/store/store'
 import LayoutMain from '@/layouts/LayoutMain.vue'
 import FlPlayerList from '@/components/FlPlayerList.vue'
 import FlButtonsBottom from '@/components/FlButtonsBottom.vue'
+import {errorAlert} from '@/utils'
 export default defineComponent({
 	name: 'PageGameResult',
 	components: { LayoutMain, FlPlayerList, FlButtonsBottom, IonButton },
 	setup () {
 		const store = useStore()
-		const gameLoaded = computed<boolean>(() => !!store.state.game && !!store.state.game.finished)
-		const players = computed<GameReportScore[]>(() => store.getters['userScoreOrder'])
-		const rounds = computed<number>(() => store.state.game.result.rounds)
-		const time = computed<string>(() => store.getters['timePlayed'])
-		const canPlayAgain = computed<boolean>(() => false) // TODO implementovat
+		const router = useRouter()
 
-		const exitGame = () => store.dispatch('resetState')
+		const game = computed<Game>(() => store.state.game)
+		const gameLoaded = computed<boolean>(() => !!game.value && !!game.value.finished)
+		const players = computed<GameReportScore[]>(() => store.getters['userScoreOrder'])
+		const rounds = computed<number>(() => game.value.result.rounds)
+		const time = computed<string>(() => store.getters['timePlayed'])
+
+		const exitGame = () => {
+			router.push({ name: 'pageHome' }).catch(() => null)
+			store.commit('RESET_STATE')
+		}
+
+		const reCreateGame = async (gameId: string) => {
+			store.commit('RESET_STATE')
+			const resp = await store.state.wsConnection.createGame(gameId)
+			if (resp.success) {
+				router.push({ name: 'pageWaitingRoom' }).catch(() => null)
+			} else {
+				errorAlert(resp.message)
+				router.push({ name: 'pageHome' }).catch(() => null)
+			}
+		}
+
+		const reJoinGame = async (gameId: string) => {
+			store.commit('RESET_STATE')
+			const err = await store.state.wsConnection.joinGame(gameId)
+			if (!err) {
+				router.push({ name: 'pageWaitingRoom' }).catch(() => null)
+			} else {
+				errorAlert(err === 'game_not_found' ? 'The creator of the game needs to reopen it first! Try again in a moment.' : err)
+				router.push({ name: 'pageJoinGame', query: { id: gameId } }).catch(() => null)
+			}
+		}
+
 		const playAgain = () => {
-			console.log('NOT IMPLEMENTED')
+			if (game.value.creator) {
+				reCreateGame(game.value.id)
+			} else {
+				reJoinGame(game.value.id)
+			}
 		}
 
 		return {
 			playAgain,
 			exitGame,
-			canPlayAgain,
 			gameLoaded,
 			players,
 			rounds,

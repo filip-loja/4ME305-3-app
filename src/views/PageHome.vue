@@ -29,10 +29,12 @@ export default defineComponent({
 
 		const createGame = async () => {
 			if (await checkProfile()) {
-				const success = await ws.value.createGame()
-				if (success) {
+				const resp = await ws.value.createGame()
+				if (resp.success) {
 					router.push({ name: 'pageWaitingRoom' }).catch(() => null)
-					// TODO implementovat else vetvu
+				} else {
+					// TODO implementovat alert
+					console.log(resp.message)
 				}
 			} else {
 				router.push({ name: 'pageProfile' }).catch(() => null)

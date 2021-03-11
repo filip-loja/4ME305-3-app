@@ -47,15 +47,16 @@ export class WsConnection {
 		return this.syncEmit('client-rename', username)
 	}
 
-	async createGame (): Promise<boolean> {
+	async createGame (requestedId: string = null): Promise<any> {
 		try {
-			const id = await this.syncEmit('game-create')
-			const qr = await QRCode.toDataURL(id)
-			this.store.commit('CREATE_GAME', { id, qr, creator: true })
-			return Promise.resolve(true)
+			const resp = await this.syncEmit('game-create', requestedId)
+			if (resp.success) {
+				const qr = await QRCode.toDataURL(resp.id)
+				this.store.commit('CREATE_GAME', { id: resp.id, qr, creator: true })
+			}
+			return Promise.resolve(resp)
 		} catch (e) {
-			console.log(e)
-			return Promise.resolve(false)
+			return Promise.resolve({ success: false, message: e })
 		}
 	}
 

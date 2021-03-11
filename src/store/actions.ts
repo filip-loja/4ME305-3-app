@@ -56,14 +56,16 @@ export const resetState = async (context: A, reason: string = null) => {
 }
 
 export const connectionLost = async (context: A, reason: string) => {
-	const alert = await alertController
-		.create({
-			header: 'Connection lost!',
-			message: reason,
-			backdropDismiss: false,
-			buttons: [{ text: 'Ok', role: 'cancel' }]
-		})
-	await alert.present()
+	if (context.state.game) {
+		const alert = await alertController
+			.create({
+				header: 'Connection lost!',
+				message: reason,
+				backdropDismiss: false,
+				buttons: [{ text: 'Ok', role: 'cancel' }]
+			})
+		await alert.present()
+	}
 	router.push({ name: 'pageHome' }).catch(() => null)
 	context.commit('RESET_STATE')
 }

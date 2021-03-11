@@ -21,10 +21,10 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from 'vue'
+import { computed, defineComponent, ref, watch } from 'vue'
 import { IonButton, IonList, IonItem, IonLabel, IonInput } from '@ionic/vue'
 import { useStore } from '@/store'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { WsConnection } from '@/ws/WsConnection'
 import { errorAlert } from '@/utils'
 import LayoutMain from '@/layouts/LayoutMain.vue'
@@ -38,9 +38,17 @@ export default defineComponent({
 	setup () {
 		const store = useStore()
 		const router = useRouter()
+		const route = useRoute()
+
 		const gameId = ref<string>('')
 		const ws = computed<WsConnection>(() => store.state.wsConnection)
 		const tst = ref(null)
+
+		watch(() => route.query.id, newValue => {
+			if (newValue) {
+				gameId.value = newValue as string
+			}
+		}, { immediate: true })
 
 		const joinGame = async () => {
 			if (gameId.value.trim().length) {
