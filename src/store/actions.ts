@@ -3,7 +3,7 @@ import {Card, CardColor, RoundInitialState, RootState, GameReport} from '@/store
 import {changeColor, errorAlert} from '@/utils'
 import router from '@/router'
 import { WsConnection } from '@/ws/WsConnection'
-import { toastController } from '@ionic/vue'
+import {alertController, toastController} from '@ionic/vue'
 
 type A = ActionContext<RootState, RootState>
 
@@ -51,6 +51,19 @@ export const resetState = async (context: A, reason: string = null) => {
 		console.log(reason)
 	}
 	await context.state.wsConnection.leaveGame()
+	router.push({ name: 'pageHome' }).catch(() => null)
+	context.commit('RESET_STATE')
+}
+
+export const connectionLost = async (context: A, reason: string) => {
+	const alert = await alertController
+		.create({
+			header: 'Connection lost!',
+			message: reason,
+			backdropDismiss: false,
+			buttons: [{ text: 'Ok', role: 'cancel' }]
+		})
+	await alert.present()
 	router.push({ name: 'pageHome' }).catch(() => null)
 	context.commit('RESET_STATE')
 }

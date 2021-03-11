@@ -17,6 +17,7 @@ export class WsConnection {
 
 		this.socket.on('connection-established', (playerId: string) => this.store.commit('SET_PLAYER_ID', playerId))
 		this.socket.on('reset', (reason: string) => this.store.dispatch('resetState', reason))
+		this.socket.on('disconnect', (reason: string) => this.store.dispatch('connectionLost', reason))
 
 		this.socket.on('game-player-added', (newPlayer: ClientPlayer) => {
 			this.store.commit('ADD_PLAYERS', [newPlayer])
