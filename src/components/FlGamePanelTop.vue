@@ -22,29 +22,41 @@ import { defineComponent, computed } from 'vue'
 import { IonButton, IonHeader, IonIcon, alertController } from '@ionic/vue'
 import { exit, people } from 'ionicons/icons'
 import { useStore } from '@/store'
+import { Game } from '@/store/store'
+import { WsConnection } from '@/ws/WsConnection'
+import { useRouter } from 'vue-router'
 export default defineComponent({
 	name: 'FlGamePanelTop',
 	emits: ['show-players'],
 	components: { IonButton, IonHeader, IonIcon },
 	setup (props, { emit }) {
 		const store = useStore()
+		const router = useRouter()
 		const currentPlayerName = computed<string>(() => store.getters['currentPlayerName'])
 		const isMyTurn = computed<boolean>(() => store.getters['isMyTurn'])
+
+		const game = computed<Game>(() => store.state.game)
+		const ws = computed<WsConnection>(() => store.state.wsConnection)
+
 		const exitGame = async () => {
+			const message = game.value.creator ? 'Are you sure you want to cancel the game? This action will disconnect all players that have already joined in.' : 'Are you sure you want to leave this game?'
+
 			const alert = await alertController
 				.create({
 					header: 'Please confirm!',
-					message: 'Are you sure you want to leave the game. This will also terminate the for all other players.',
+					message,
 					backdropDismiss: false,
 					buttons: [
 						{
 							text: 'No',
-							role: 'cancel',
-							cssClass: 'warning'
+							role: 'cancel'
 						},
 						{
 							text: 'Yes',
-							handler: () => store.dispatch('resetState')
+							handler: () => {
+								ws.value.leaveGame()
+								router.push({ name: 'pageHome' }).catch(() => null)
+							}
 						}
 					]
 				})

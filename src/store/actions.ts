@@ -46,11 +46,26 @@ export const finishRound = async (context: A, result: GameReport) => {
 	router.push({ name: 'pageGameResult' }).catch(() => null)
 }
 
+// TODO mozno tuto akciu nebude treba
 export const resetState = async (context: A, reason: string = null) => {
 	if (reason) {
 		console.log(reason)
 	}
 	await context.state.wsConnection.leaveGame()
+	router.push({ name: 'pageHome' }).catch(() => null)
+	context.commit('RESET_STATE')
+}
+
+// TODO mozno zjednotit s akciou connection lost
+export const gameTerminated = async (context: A) => {
+	const alert = await alertController
+		.create({
+			header: 'Connection lost!',
+			message: 'This game has been terminated!',
+			backdropDismiss: false,
+			buttons: [{ text: 'Ok', role: 'cancel' }]
+		})
+	await alert.present()
 	router.push({ name: 'pageHome' }).catch(() => null)
 	context.commit('RESET_STATE')
 }

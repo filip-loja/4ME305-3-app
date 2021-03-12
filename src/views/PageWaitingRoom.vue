@@ -22,8 +22,9 @@
 import { defineComponent, computed, ref } from 'vue'
 import LayoutMain from '@/layouts/LayoutMain.vue'
 import { useStore } from '@/store'
+import { useRouter } from 'vue-router'
 import { Game } from '@/store/store'
-import { IonButton } from '@ionic/vue'
+import {alertController, IonButton} from '@ionic/vue'
 import { WsConnection } from '@/ws/WsConnection'
 import { errorAlert } from '@/utils'
 import FlButtonsBottom from '@/components/FlButtonsBottom.vue'
@@ -33,19 +34,35 @@ export default defineComponent({
 	components: { LayoutMain, FlPlayerList, FlButtonsBottom, IonButton },
 	setup () {
 		const store = useStore()
+		const router = useRouter()
+
 		const game = computed<Game>(() => store.state.game)
 		const ws = computed<WsConnection>(() => store.state.wsConnection)
 
 		const canStart = computed<boolean>(() => store.state.game.players.length > 1)
 
 		const leaveGame = async () => {
-			// TODO mozno popup aby potvrdili
-			const error = await ws.value.leaveGame()
-			if (error) {
-				errorAlert(error, 'bottom')
-			} else {
-				store.dispatch('resetState')
-			}
+			const message = game.value.creator ? 'Are you sure you want to cancel the game? This action will disconnect all players that have already joined in.' : 'Are you sure you want to leave this game?'
+			const alert = await alertController
+				.create({
+					header: 'Please confirm!',
+					message,
+					backdropDismiss: false,
+					buttons: [
+						{
+							text: 'No',
+							role: 'cancel'
+						},
+						{
+							text: 'Yes',
+							handler: () => {
+								ws.value.leaveGame()
+								router.push({ name: 'pageHome' }).catch(() => null)
+							}
+						}
+					]
+				})
+			await alert.present()
 		}
 
 		const startGame = () => {

@@ -29,6 +29,7 @@ export class WsConnection {
 		this.socket.on('game-round-new', (initialState: RoundInitialState) => this.store.dispatch('initRound', initialState))
 		this.socket.on('game-new-turn', (payload: CommittedTurn) => this.store.commit('PREPARE_NEW_TURN', payload))
 		this.socket.on('game-finish', (result: GameReport) => this.store.dispatch('finishRound', result))
+		this.socket.on('game-terminated', () => this.store.dispatch('gameTerminated'))
 
 	}
 
@@ -77,19 +78,9 @@ export class WsConnection {
 		}
 	}
 
-	async leaveGame (): Promise<string> {
-		try {
-			const resp = await this.syncEmit('game-leave', this.store.state.game.id)
-			if (resp.success) {
-				this.store.commit('CREATE_GAME', null)
-				return Promise.resolve(null)
-			} else {
-				return Promise.resolve(resp.message)
-			}
-		} catch (e) {
-			console.log(e)
-			return Promise.resolve(e)
-		}
+	leaveGame (): void {
+		this.socket.emit('game-leave', this.store.state.game.id)
+		this.store.commit('RESET_STATE')
 	}
 
 	startGame (): void {
