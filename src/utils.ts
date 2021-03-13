@@ -1,7 +1,10 @@
 import { Store } from 'vuex'
-import { RootState } from '@/store/store'
+import {Geo, RootState} from '@/store/store'
 import store from '@/store'
 import { actionSheetController, toastController } from '@ionic/vue'
+import { GeolocationPosition } from '@capacitor/core'
+import { Plugins } from '@capacitor/core'
+const { Geolocation } = Plugins
 
 export const withTimeout = (timeout: number, userPromise: Promise<any>): Promise<any> => {
 	const checkPromise = new Promise((resolve, reject) => {
@@ -55,4 +58,22 @@ export const checkProfile = async () => {
 	} else {
 		return Promise.resolve(true)
 	}
+}
+
+export const getMyCoordinates = async () => {
+	return Promise.resolve(null)
+	// const request = Geolocation.getCurrentPosition().then((location: GeolocationPosition) => {
+	// 	const result: Geo = {
+	// 		lat: location.coords.latitude,
+	// 		lon: location.coords.longitude
+	// 	}
+	// 	return Promise.resolve(result)
+	// }).catch(() => null)
+	// return withTimeout(10000, request).then(resp => {
+	// 	if (typeof resp === 'string') {
+	// 		return Promise.resolve(null)
+	// 	} else {
+	// 		return Promise.resolve(resp)
+	// 	}
+	// })
 }

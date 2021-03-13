@@ -30,7 +30,7 @@ export const currentColor = (state: RootState): CardColor => {
 export const currentPlayerName = (state: RootState, getters: any): string => {
 	if (!state.game) return null
 	const name = (state.game.players.find(player => player.id === state.currentPlayerId) || {}).name
-	return getters.isMyTurn ? 'My turn' : `${name}'s turn`
+	return getters.isMyTurn ? 'Your turn' : `${name}'s turn`
 }
 
 export const cardsTaken = (state: RootState): boolean => {

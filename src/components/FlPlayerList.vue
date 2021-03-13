@@ -3,8 +3,11 @@
 		<ion-item v-for="(player, i) in players" :key="player.id">
 			<ion-label>
 				<span class="fl-player-number">{{ i + 1 }}</span>
-				{{ player.name }}
-				<small>{{ player.id === myPlayerId ? '(You)' : '' }}</small>
+				<div>
+					{{ player.name }} <small>{{ player.id === myPlayerId ? '(You)' : '' }}</small>
+					<div v-if="player.address" class="fl-location-info">{{ player.address }}</div>
+				</div>
+
 				<ion-icon :icon="chatboxEllipses" class="fl-player-indicator" v-if="player.id === currentPlayerId" />
 				<div v-if="withScore" class="fl-player-indicator">{{ player.score }}<small>pt</small></div>
 			</ion-label>
@@ -55,6 +58,8 @@ export default defineComponent({
 
 	.fl-player-list ion-label {
 		position: relative;
+		display: flex;
+		align-items: center;
 	}
 
 	.fl-player-indicator {
@@ -62,5 +67,11 @@ export default defineComponent({
 		right: 0;
 		top: 50%;
 		transform: translateY(-50%);
+	}
+
+	.fl-location-info {
+		font-size: 10px;
+		padding-top: 3px;
+		color: var(--ion-color-medium-shade)
 	}
 </style>

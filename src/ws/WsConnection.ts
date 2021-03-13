@@ -1,8 +1,16 @@
 import { Socket } from 'socket.io-client/build/socket'
 import { Store } from 'vuex'
-import {ClientPlayer, RoundInitialState, CommittedTurn, StoreDef, GameReport, RemovePlayerDiff} from '@/store/store'
+import {
+	ClientPlayer,
+	RoundInitialState,
+	CommittedTurn,
+	StoreDef,
+	GameReport,
+	RemovePlayerDiff,
+	NewGamePayload
+} from '@/store/store'
 import { io } from 'socket.io-client'
-import { withTimeout } from '@/utils'
+import {getMyCoordinates, withTimeout} from '@/utils'
 import store from '@/store'
 import QRCode from 'qrcode'
 
@@ -20,10 +28,7 @@ export class WsConnection {
 		this.socket.on('reset', (reason: string) => this.store.dispatch('resetState', reason))
 		this.socket.on('disconnect', (reason: string) => this.store.dispatch('connectionLost', reason))
 
-		this.socket.on('game-player-added', (newPlayer: ClientPlayer) => {
-			this.store.commit('ADD_PLAYERS', [newPlayer])
-			// console.log('Player added: ', newPlayer)
-		})
+		this.socket.on('game-player-added', (newPlayer: ClientPlayer) => this.store.commit('ADD_PLAYERS', [newPlayer]))
 
 		this.socket.on('game-player-removed', (diff: RemovePlayerDiff) => this.store.commit('REMOVE_PLAYER', diff))
 
@@ -51,7 +56,12 @@ export class WsConnection {
 
 	async createGame (requestedId: string = null): Promise<any> {
 		try {
-			const resp = await this.syncEmit('game-create', requestedId)
+			const geolocation = await getMyCoordinates()
+			const payload: NewGamePayload = {
+				id: requestedId,
+				geo: geolocation
+			}
+			const resp = await this.syncEmit('game-create', payload)
 			if (resp.success) {
 				const qr = await QRCode.toDataURL(resp.id)
 				this.store.commit('CREATE_GAME', { id: resp.id, qr, creator: true })
@@ -64,7 +74,12 @@ export class WsConnection {
 
 	async joinGame (gameId: string): Promise<string> {
 		try {
-			const resp = await this.syncEmit('game-join', gameId)
+			const geolocation = await getMyCoordinates()
+			const payload: NewGamePayload = {
+				id: gameId,
+				geo: geolocation
+			}
+			const resp = await this.syncEmit('game-join', payload)
 			if (resp.success) {
 				const qr = await QRCode.toDataURL(gameId)
 				this.store.commit('CREATE_GAME', { qr, id: gameId, creator: false })

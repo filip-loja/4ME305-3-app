@@ -39,6 +39,7 @@ export interface CardMap {
 export interface ClientPlayer {
 	id: string;
 	name: string;
+	address: string;
 }
 
 export interface Game {
@@ -103,4 +104,14 @@ export interface RemovePlayerDiff {
 	id: string;
 	currentPlayer?: string;
 	stackAdded?: string[]
+}
+
+export interface NewGamePayload {
+	id: string;
+	geo: Geo;
+}
+
+export interface Geo {
+	lat: number;
+	lon: number;
 }
