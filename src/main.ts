@@ -25,13 +25,22 @@ import '@ionic/vue/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 import './theme/core.css'
+import {loadState} from '@/store/persistent'
 
 defineCustomElements(window)
 const app = createApp(App)
   .use(IonicVue)
-  .use(router)
 	.use(store, key)
 
-router.isReady().then(() => {
-  app.mount('#app');
+loadState().then(res => {
+	if (res.success) {
+		store.commit('storage/HYDRATE', res.vuexContent)
+		console.log(process.env.NODE_ENV)
+	}
+
+	app.use(router)
+	router.isReady().then(() => {
+		app.mount('#app')
+	})
+
 })

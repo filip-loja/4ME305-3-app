@@ -6,6 +6,7 @@ import * as mutations from '@/store/mutations'
 import * as getters from '@/store/getters'
 import { rootState } from '@/store/state'
 import moduleStorage from '@/store/module-storage'
+import { persistent } from '@/store/persistent'
 
 export const key: InjectionKey<Store<StoreDef>> = Symbol()
 export function useStore () {
@@ -15,6 +16,7 @@ export function useStore () {
 const store = createStore<StoreDef>({
 
 	modules: { storage: moduleStorage },
+	plugins: [ persistent ],
 
   state: rootState,
 	mutations,

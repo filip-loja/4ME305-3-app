@@ -16,8 +16,6 @@ import QRCode from 'qrcode'
 
 export class WsConnection {
 
-	// url = 'http://server-pharaoh-loja.westeurope.azurecontainer.io:3000/'
-	url = 'http://192.168.0.101:3000'
 	socket: Socket = null
 	store: Store<StoreDef> = store
 
@@ -36,7 +34,12 @@ export class WsConnection {
 		this.socket.on('game-new-turn', (payload: CommittedTurn) => this.store.commit('PREPARE_NEW_TURN', payload))
 		this.socket.on('game-finish', (result: GameReport) => this.store.dispatch('finishRound', result))
 		this.socket.on('game-terminated', (reason: string) => this.store.dispatch('gameTerminated', reason))
+	}
 
+	get url (): string {
+		return process.env.NODE_ENV === 'development' ?
+			'http://192.168.0.101:3000' :
+			'http://server-pharaoh-loja.westeurope.azurecontainer.io:3000/'
 	}
 
 	createSocket () {
