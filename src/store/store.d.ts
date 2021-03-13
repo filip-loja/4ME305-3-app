@@ -13,6 +13,7 @@ export interface RootState {
 	currentPlayerId: string;
 	myPlayerId: string;
 	myPlayerCardIds: string[];
+	loading: number;
 }
 
 export interface ModulesDef {

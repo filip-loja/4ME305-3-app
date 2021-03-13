@@ -12,6 +12,13 @@ export const SET_CONNECTION = (state: RootState, wsConnection: WsConnection): vo
 	state.wsConnection = wsConnection
 }
 
+export const SET_LOADING = (state: RootState, payload: number): void => {
+	state.loading += payload
+	if (state.loading < 0) {
+		state.loading = 0
+	}
+}
+
 export const RESET_STATE = (state: RootState): void => {
 	state.game = null
 	state.currentPlayerId = null

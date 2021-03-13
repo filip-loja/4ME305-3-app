@@ -12,5 +12,6 @@ export const rootState: RootState = {
 	activeEffects: [],
 	myPlayerCardIds: [],
 	cardsDeck: [],
-	cardsStack: []
+	cardsStack: [],
+	loading: 0,
 }

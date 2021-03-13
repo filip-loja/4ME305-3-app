@@ -1,6 +1,10 @@
 
 import {Card, CardColor, CardEffect, CardType, ClientPlayer, GameReportScore, RootState} from '@/store/store'
 
+export const isLoading = (state: RootState): boolean => {
+	return state.loading > 0
+}
+
 export const isMyTurn = (state: RootState): boolean => {
 	return state.currentPlayerId === state.myPlayerId
 }

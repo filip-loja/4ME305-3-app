@@ -1,5 +1,6 @@
 <template>
 	<ion-page id="main-content">
+		<ion-progress-bar type="indeterminate" color="warning" v-if="isLoading" />
 
 		<ion-header v-if="!noHeader">
 			<ion-toolbar>
@@ -25,7 +26,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+	import {computed, defineComponent} from 'vue'
 import {
 	IonContent,
 	IonHeader,
@@ -35,9 +36,11 @@ import {
 	IonButtons,
 	IonButton,
 	menuController,
-	IonIcon
+	IonIcon,
+	IonProgressBar
 } from '@ionic/vue'
 import { menu, arrowBack } from 'ionicons/icons'
+import { useStore } from '@/store'
 
 export default defineComponent({
 	name: 'LayoutMain',
@@ -49,7 +52,8 @@ export default defineComponent({
 		IonToolbar,
 		IonButtons,
 		IonButton,
-		IonIcon
+		IonIcon,
+		IonProgressBar
 	},
 	props: {
 		title: { type: String, required: true },
@@ -57,11 +61,14 @@ export default defineComponent({
 		noHeader: { type: Boolean, default: false }
 	},
 	setup () {
+		const store = useStore()
+		const isLoading = computed<boolean>(() => store.getters['isLoading'])
 		const openMenu = async () => await menuController.open()
 		return {
 			openMenu,
 			menu,
-			arrowBack
+			arrowBack,
+			isLoading
 		}
 	}
 

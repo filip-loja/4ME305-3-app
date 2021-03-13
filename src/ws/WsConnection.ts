@@ -122,6 +122,7 @@ export class WsConnection {
 	}
 
 	syncEmit (eventName: string, payload: any = null): Promise<any> {
+		this.store.commit('SET_LOADING', 1)
 		let resolver: any = null
 		const request = new Promise(resolve => {
 			resolver = resolve
@@ -130,6 +131,9 @@ export class WsConnection {
 		this.socket.on(eventName + '-resp', (data: any) => {
 			resolver(data)
 		})
-		return withTimeout(5000, request)
+		return withTimeout(5000, request).then(resp => {
+			this.store.commit('SET_LOADING', -1)
+			return resp
+		})
 	}
 }

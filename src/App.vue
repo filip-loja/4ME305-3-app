@@ -1,4 +1,5 @@
 <template>
+	<div class="fl-loading" v-if="isLoading"></div>
   <IonApp>
     <IonSplitPane content-id="main-content">
       <ion-menu content-id="main-content" type="overlay" side="end">
@@ -32,7 +33,7 @@
 
 <script lang="ts">
 import { IonApp, IonContent, IonIcon, IonItem, IonLabel, IonList, IonListHeader, IonMenu, IonMenuToggle, IonNote, IonRouterOutlet, IonSplitPane } from '@ionic/vue';
-import { defineComponent, ref, watch } from 'vue';
+import { defineComponent, ref, watch, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useStore } from '@/store'
 import { archiveOutline, archiveSharp, bookmarkOutline, bookmarkSharp, heartOutline, heartSharp, mailOutline, mailSharp, paperPlaneOutline, paperPlaneSharp, trashOutline, trashSharp, warningOutline, warningSharp } from 'ionicons/icons';
@@ -51,10 +52,11 @@ export default defineComponent({
     IonMenuToggle,
 		IonNote,
     IonRouterOutlet,
-    IonSplitPane,
+    IonSplitPane
   },
   setup() {
 		const store = useStore()
+		const isLoading = computed<boolean>(() => store.getters['isLoading'])
 		watch(() => store.state.storage.localProfile.username, (newValue, oldValue) => {
 			if (newValue && !oldValue) {
 				store.dispatch('initServerConnection')
@@ -127,13 +129,26 @@ export default defineComponent({
       trashSharp,
       warningOutline,
       warningSharp,
-      isSelected: (url: string) => url === route.path ? 'selected' : ''
+      isSelected: (url: string) => url === route.path ? 'selected' : '',
+			isLoading
     }
   }
 });
 </script>
 
 <style scoped>
+
+	.fl-loading {
+		display: block;
+		width: 100%;
+		height: 100vh;
+		position: fixed;
+		top: 0;
+		left: 0;
+		background-color: rgba(255, 255, 255, 0.2);
+		z-index: 9000000;
+	}
+
 ion-menu ion-content {
   --background: var(--ion-item-background, var(--ion-background-color, #fff));
 }
