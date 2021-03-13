@@ -1,6 +1,6 @@
 import { Socket } from 'socket.io-client/build/socket'
 import { Store } from 'vuex'
-import {ClientPlayer, RoundInitialState, CommittedTurn, StoreDef, GameReport} from '@/store/store'
+import {ClientPlayer, RoundInitialState, CommittedTurn, StoreDef, GameReport, RemovePlayerDiff} from '@/store/store'
 import { io } from 'socket.io-client'
 import { withTimeout } from '@/utils'
 import store from '@/store'
@@ -8,7 +8,8 @@ import QRCode from 'qrcode'
 
 export class WsConnection {
 
-	url = 'http://192.168.0.103:3000'
+	// url = 'http://server-pharaoh-loja.westeurope.azurecontainer.io:3000/'
+	url = 'http://192.168.0.101:3000'
 	socket: Socket = null
 	store: Store<StoreDef> = store
 
@@ -24,12 +25,12 @@ export class WsConnection {
 			// console.log('Player added: ', newPlayer)
 		})
 
-		this.socket.on('game-player-removed', (playerId: string) => this.store.commit('REMOVE_PLAYER', playerId))
+		this.socket.on('game-player-removed', (diff: RemovePlayerDiff) => this.store.commit('REMOVE_PLAYER', diff))
 
 		this.socket.on('game-round-new', (initialState: RoundInitialState) => this.store.dispatch('initRound', initialState))
 		this.socket.on('game-new-turn', (payload: CommittedTurn) => this.store.commit('PREPARE_NEW_TURN', payload))
 		this.socket.on('game-finish', (result: GameReport) => this.store.dispatch('finishRound', result))
-		this.socket.on('game-terminated', () => this.store.dispatch('gameTerminated'))
+		this.socket.on('game-terminated', (reason: string) => this.store.dispatch('gameTerminated', reason))
 
 	}
 

@@ -98,3 +98,9 @@ export interface GameReportScore {
 	name: string;
 	score: number;
 }
+
+export interface RemovePlayerDiff {
+	id: string;
+	currentPlayer?: string;
+	stackAdded?: string[]
+}

@@ -57,11 +57,11 @@ export const resetState = async (context: A, reason: string = null) => {
 }
 
 // TODO mozno zjednotit s akciou connection lost
-export const gameTerminated = async (context: A) => {
+export const gameTerminated = async (context: A, reason: string = null) => {
 	const alert = await alertController
 		.create({
-			header: 'Connection lost!',
-			message: 'This game has been terminated!',
+			header: 'Game terminated!',
+			message: reason || 'This game has been terminated!',
 			backdropDismiss: false,
 			buttons: [{ text: 'Ok', role: 'cancel' }]
 		})

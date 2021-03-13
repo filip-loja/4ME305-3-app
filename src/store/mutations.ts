@@ -4,7 +4,7 @@ import {
 	CardColor,
 	ClientPlayer,
 	RoundInitialState, CommittedTurn,
-	RootState, GameReport
+	RootState, GameReport, RemovePlayerDiff
 } from '@/store/store'
 import {WsConnection} from '@/ws/WsConnection'
 
@@ -92,11 +92,15 @@ export const ADD_PLAYERS = (state: RootState, newPlayers: ClientPlayer[]): void 
 	}
 }
 
-export const REMOVE_PLAYER = (state: RootState, id: string): void => {
+export const REMOVE_PLAYER = (state: RootState, diff: RemovePlayerDiff): void => {
 	if (state.game) {
-		const index = state.game.players.findIndex(player => player.id === id)
+		const index = state.game.players.findIndex(player => player.id === diff.id)
 		if (index >= 0) {
 			state.game.players.splice(index, 1)
+		}
+		if (state.game.started) {
+			state.currentPlayerId = diff.currentPlayer
+			state.cardsStack.push(...diff.stackAdded)
 		}
 	}
 }
