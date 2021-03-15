@@ -22,3 +22,18 @@ ion-toolbar {
 .fl-round-toast::part(message) {
     line-height: unset !important;
 }
+
+.fl-error-alert {
+    --border-radius: 15px;
+    --border-width: 3px;
+    --border-style: solid;
+    --border-color: var(--ion-color-danger-shade);
+    --background: rgba(235, 68, 90, 0.30);
+}
+
+.fl-error-alert::part(message) {
+    text-align: center;
+    line-height: 1.5;
+    color: var(--ion-color-danger-shade);
+    font-weight: bold;
+}

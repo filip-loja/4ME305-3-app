@@ -13,7 +13,7 @@
 			</ion-toolbar>
 		</ion-header>
 
-		<ion-content class="ion-padding">
+		<ion-content class="ion-padding" :class="{'fl-content': bg}">
 			<slot />
 		</ion-content>
 
@@ -53,7 +53,8 @@ export default defineComponent({
 	props: {
 		title: { type: String, required: true },
 		back: { type: Boolean, default: false },
-		noHeader: { type: Boolean, default: false }
+		noHeader: { type: Boolean, default: false },
+		bg: { type: Boolean, default: false }
 	},
 	setup () {
 		const store = useStore()
@@ -70,5 +71,9 @@ export default defineComponent({
 </script>
 
 <style scoped>
+
+	.fl-content {
+		--background: url('/assets/wood_texture.jpg');;
+	}
 
 </style>

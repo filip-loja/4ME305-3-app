@@ -45,7 +45,7 @@ export const errorAlert = async (message: string, position: 'top' | 'bottom' = '
 			message,
 			duration: 1500,
 			position: position,
-			color: 'danger'
+			cssClass: 'fl-error-alert'
 		})
 	return toast.present();
 }
@@ -60,19 +60,18 @@ export const checkProfile = async () => {
 }
 
 export const getMyCoordinates = async () => {
-	return Promise.resolve(null)
-	// const request = Geolocation.getCurrentPosition().then((location: GeolocationPosition) => {
-	// 	const result: Geo = {
-	// 		lat: location.coords.latitude,
-	// 		lon: location.coords.longitude
-	// 	}
-	// 	return Promise.resolve(result)
-	// }).catch(() => null)
-	// return withTimeout(10000, request).then(resp => {
-	// 	if (typeof resp === 'string') {
-	// 		return Promise.resolve(null)
-	// 	} else {
-	// 		return Promise.resolve(resp)
-	// 	}
-	// })
+	const request = Geolocation.getCurrentPosition().then((location: GeolocationPosition) => {
+		const result: Geo = {
+			lat: location.coords.latitude,
+			lon: location.coords.longitude
+		}
+		return Promise.resolve(result)
+	}).catch(() => null)
+	return withTimeout(10000, request).then(resp => {
+		if (typeof resp === 'string') {
+			return Promise.resolve(null)
+		} else {
+			return Promise.resolve(resp)
+		}
+	})
 }

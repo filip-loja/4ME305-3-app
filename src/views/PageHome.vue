@@ -1,5 +1,5 @@
 <template>
-	<layout-main title="Pharaoh">
+	<layout-main title="Pharaoh" bg>
 		<div class="fl-page-home">
 			<div>
 				<ion-button class="fl-btn" @click="createGame">Create Game</ion-button>
