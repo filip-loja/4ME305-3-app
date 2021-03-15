@@ -4,17 +4,12 @@
 
 		<ion-header v-if="!noHeader">
 			<ion-toolbar>
-				<ion-buttons slot="start" v-if="backHref">
-					<ion-button :router-link="backHref">
+				<ion-buttons slot="start" v-if="back">
+					<ion-button :router-link="{name: 'pageHome'}">
 						<ion-icon slot="icon-only" :icon="arrowBack" />
 					</ion-button>
 				</ion-buttons>
 				<ion-title>{{ title }}</ion-title>
-				<ion-buttons slot="end">
-					<ion-button expand="block" @click="openMenu">
-						<ion-icon slot="icon-only" :icon="menu" />
-					</ion-button>
-				</ion-buttons>
 			</ion-toolbar>
 		</ion-header>
 
@@ -26,7 +21,7 @@
 </template>
 
 <script lang="ts">
-	import {computed, defineComponent} from 'vue'
+import { computed, defineComponent } from 'vue'
 import {
 	IonContent,
 	IonHeader,
@@ -39,7 +34,7 @@ import {
 	IonIcon,
 	IonProgressBar
 } from '@ionic/vue'
-import { menu, arrowBack } from 'ionicons/icons'
+import { arrowBack } from 'ionicons/icons'
 import { useStore } from '@/store'
 
 export default defineComponent({
@@ -57,7 +52,7 @@ export default defineComponent({
 	},
 	props: {
 		title: { type: String, required: true },
-		backHref: { type: Object, default: null },
+		back: { type: Boolean, default: false },
 		noHeader: { type: Boolean, default: false }
 	},
 	setup () {
@@ -66,7 +61,6 @@ export default defineComponent({
 		const openMenu = async () => await menuController.open()
 		return {
 			openMenu,
-			menu,
 			arrowBack,
 			isLoading
 		}

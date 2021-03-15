@@ -1,5 +1,5 @@
 <template>
-	<layout-main title="Join a Game">
+	<layout-main title="Join a Game" back>
 		<div class="fl-page-join-game">
 			<ion-list>
 
@@ -8,10 +8,6 @@
 					<ion-input type="text" required v-model="gameId" />
 				</ion-item>
 
-				<img :src="tst" />
-
-				<br /><br />
-				<ion-button class="fl-btn" @click="scanQrCode">Scan QR code</ion-button>
 				<br /><br />
 				<ion-button class="fl-btn" @click="joinGame">Join</ion-button>
 
@@ -28,9 +24,6 @@ import { useRouter, useRoute } from 'vue-router'
 import { WsConnection } from '@/ws/WsConnection'
 import { errorAlert } from '@/utils'
 import LayoutMain from '@/layouts/LayoutMain.vue'
-import { Decoder } from '@nuintun/qrcode'
-import {CameraPhoto, CameraResultType, CameraSource, Plugins} from '@capacitor/core'
-const { Camera } = Plugins
 
 export default defineComponent({
 	name: 'PageJoinGame',
@@ -42,7 +35,6 @@ export default defineComponent({
 
 		const gameId = ref<string>('')
 		const ws = computed<WsConnection>(() => store.state.wsConnection)
-		const tst = ref(null)
 
 		watch(() => route.query.id, newValue => {
 			if (newValue) {
@@ -62,32 +54,9 @@ export default defineComponent({
 			}
 		}
 
-		const scanQrCode = async () => {
-			const image: CameraPhoto = await Camera.getPhoto({
-				quality: 70,
-				allowEditing: false,
-				resultType: CameraResultType.DataUrl,
-				source: CameraSource.Camera
-			})
-
-			const qrcode = new Decoder()
-			qrcode.setOptions({
-				inversionAttempts: 'attemptBoth'
-			})
-			tst.value = image.dataUrl
-			qrcode.scan(image.dataUrl)
-				.then(result => {
-					alert('DONE')
-					gameId.value = result.data
-				})
-				.catch(error => alert(error))
-		}
-
 		return {
 			gameId,
-			joinGame,
-			scanQrCode,
-			tst
+			joinGame
 		}
 	}
 })

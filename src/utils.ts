@@ -51,7 +51,6 @@ export const errorAlert = async (message: string, position: 'top' | 'bottom' = '
 }
 
 export const checkProfile = async () => {
-	// @ts-ignore
 	if (!store.getters['storage/filledInProfile']) {
 		await errorAlert('You have to set up your profile first!', 'bottom')
 		return Promise.resolve(false)

@@ -7,7 +7,14 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     component: () => import('@/views/PageHome.vue'),
-		name: 'pageHome'
+		name: 'pageHome',
+		beforeEnter: () => {
+			if (store.state.game && store.state.game.started) {
+				return { name: 'pageGameTable' }
+			} else {
+				return true
+			}
+		}
   },
 	{
 		path: '/profile',
@@ -62,14 +69,6 @@ const routes: Array<RouteRecordRaw> = [
 			}
 		}
 	}
-	// {
-	// 	path: '/blank',
-	// 	component: () => import('@/views/Blank.vue')
-	// },
-	// {
-	// 	path: '/ws',
-	// 	component: () => import('@/views/WsTest.vue')
-	// }
 ]
 
 const router = createRouter({

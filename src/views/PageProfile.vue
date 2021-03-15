@@ -1,5 +1,5 @@
 <template>
-	<layout-main title="Profile">
+	<layout-main title="Profile" back>
 		<div class="fl-page-profile">
 
 			<div class="fl-avatar" @click="changeImage">
@@ -30,7 +30,7 @@ import { useRouter } from 'vue-router'
 import LayoutMain from '@/layouts/LayoutMain.vue'
 import FlStoredImage from '@/components/FlStoredImage.vue'
 
-import { CameraPhoto, CameraResultType, CameraSource, FilesystemDirectory, Plugins } from '@capacitor/core'
+import { CameraPhoto, CameraResultType, FilesystemDirectory, Plugins } from '@capacitor/core'
 const { Camera, Filesystem } = Plugins
 
 export default defineComponent({
