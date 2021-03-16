@@ -10,7 +10,7 @@ import {
 	NewGamePayload
 } from '@/store/store'
 import { io } from 'socket.io-client'
-import {getMyCoordinates, withTimeout} from '@/utils'
+import {errorAlert, getMyCoordinates, withTimeout} from '@/utils'
 import store from '@/store'
 import QRCode from 'qrcode'
 
@@ -23,7 +23,6 @@ export class WsConnection {
 		this.createSocket()
 
 		this.socket.on('connection-established', (playerId: string) => this.store.commit('SET_PLAYER_ID', playerId))
-		this.socket.on('reset', (reason: string) => this.store.dispatch('resetState', reason))
 		this.socket.on('disconnect', (reason: string) => this.store.dispatch('connectionLost', reason))
 
 		this.socket.on('game-player-added', (newPlayer: ClientPlayer) => this.store.commit('ADD_PLAYERS', [newPlayer]))
@@ -83,13 +82,13 @@ export class WsConnection {
 				geo: geolocation
 			}
 			const resp = await this.syncEmit('game-join', payload)
-			if (resp.success) {
+			if (resp && resp.success) {
 				const qr = await QRCode.toDataURL(gameId)
 				this.store.commit('CREATE_GAME', { qr, id: gameId, creator: false })
 				this.store.commit('ADD_PLAYERS', resp.players)
 				return Promise.resolve(null)
 			} else {
-				return Promise.resolve(resp.message)
+				return Promise.resolve(resp && resp.message)
 			}
 		} catch (e) {
 			console.log(e)
@@ -134,7 +133,10 @@ export class WsConnection {
 		this.socket.on(eventName + '-resp', (data: any) => {
 			resolver(data)
 		})
-		return withTimeout(5000, request).then(resp => {
+		return withTimeout(5000, request).catch(err => {
+			errorAlert(err)
+			return null
+		}).then(resp => {
 			this.store.commit('SET_LOADING', -1)
 			return resp
 		})

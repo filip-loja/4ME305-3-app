@@ -4,6 +4,7 @@ import {changeColor, errorAlert} from '@/utils'
 import router from '@/router'
 import { WsConnection } from '@/ws/WsConnection'
 import {alertController, toastController} from '@ionic/vue'
+import {t} from '@/messages'
 
 type A = ActionContext<RootState, RootState>
 
@@ -46,22 +47,11 @@ export const finishRound = async (context: A, result: GameReport) => {
 	router.push({ name: 'pageGameResult' }).catch(() => null)
 }
 
-// TODO mozno tuto akciu nebude treba
-export const resetState = async (context: A, reason: string = null) => {
-	if (reason) {
-		console.log(reason)
-	}
-	await context.state.wsConnection.leaveGame()
-	router.push({ name: 'pageHome' }).catch(() => null)
-	context.commit('RESET_STATE')
-}
-
-// TODO mozno zjednotit s akciou connection lost
 export const gameTerminated = async (context: A, reason: string = null) => {
 	const alert = await alertController
 		.create({
 			header: 'Game terminated!',
-			message: reason || 'This game has been terminated!',
+			message: t(reason) || 'This game has been terminated!',
 			backdropDismiss: false,
 			buttons: [{ text: 'Ok', role: 'cancel' }]
 		})
@@ -75,7 +65,7 @@ export const connectionLost = async (context: A, reason: string) => {
 		const alert = await alertController
 			.create({
 				header: 'Connection lost!',
-				message: reason,
+				message: t(reason),
 				backdropDismiss: false,
 				buttons: [{ text: 'Ok', role: 'cancel' }]
 			})
@@ -95,7 +85,6 @@ export const takeCard = async (context: A): Promise<any> => {
 	if (context.getters.cardsGiven) {
 		return await errorAlert('You cannot give away cards and take cards in one turn!')
 	}
-	// TODO kontrola ci su karty v stacku
 	context.commit('TAKE_CARDS', context.getters['cardsToTake'])
 	return null
 }
@@ -168,7 +157,8 @@ export const saveUsername = async (context: A, payload: string) => {
 				message: 'Your profile was updated successfully',
 				duration: 1500,
 				position: 'bottom',
-				color: 'success'
+				color: 'success',
+				cssClass: 'fl-toast'
 			})
 		await toast.present()
 	}

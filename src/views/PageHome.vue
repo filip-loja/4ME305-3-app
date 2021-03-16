@@ -30,11 +30,8 @@ export default defineComponent({
 		const createGame = async () => {
 			if (await checkProfile()) {
 				const resp = await ws.value.createGame()
-				if (resp.success) {
+				if (resp && resp.success) {
 					router.push({ name: 'pageWaitingRoom' }).catch(() => null)
-				} else {
-					// TODO implementovat alert
-					console.log(resp.message)
 				}
 			} else {
 				router.push({ name: 'pageProfile' }).catch(() => null)

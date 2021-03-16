@@ -5,6 +5,7 @@ import { actionSheetController, toastController } from '@ionic/vue'
 import { GeolocationPosition } from '@capacitor/core'
 import { Plugins } from '@capacitor/core'
 const { Geolocation } = Plugins
+import { t } from '@/messages'
 
 export const withTimeout = (timeout: number, userPromise: Promise<any>): Promise<any> => {
 	const checkPromise = new Promise((resolve, reject) => {
@@ -42,7 +43,7 @@ export const changeColor = async (store: Store<RootState>): Promise<void> => {
 export const errorAlert = async (message: string, position: 'top' | 'bottom' = 'top'): Promise<void> => {
 	const toast = await toastController
 		.create({
-			message,
+			message: t(message),
 			duration: 1500,
 			position: position,
 			cssClass: 'fl-error-alert'

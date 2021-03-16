@@ -28,12 +28,18 @@ ion-toolbar {
     --border-width: 3px;
     --border-style: solid;
     --border-color: var(--ion-color-danger-shade);
-    --background: rgba(235, 68, 90, 0.30);
+    --background: #f9c8ce;
 }
 
 .fl-error-alert::part(message) {
     text-align: center;
     line-height: 1.5;
     color: var(--ion-color-danger-shade);
+    font-weight: bold;
+}
+
+.fl-toast::part(message) {
+    text-align: center;
+    line-height: 1.5;
     font-weight: bold;
 }

@@ -19,14 +19,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref } from 'vue'
-import LayoutMain from '@/layouts/LayoutMain.vue'
+import { defineComponent, computed } from 'vue'
 import { useStore } from '@/store'
 import { useRouter } from 'vue-router'
 import { Game } from '@/store/store'
-import {alertController, IonButton} from '@ionic/vue'
+import { alertController, IonButton } from '@ionic/vue'
 import { WsConnection } from '@/ws/WsConnection'
-import { errorAlert } from '@/utils'
+import LayoutMain from '@/layouts/LayoutMain.vue'
 import FlButtonsBottom from '@/components/FlButtonsBottom.vue'
 import FlPlayerList from '@/components/FlPlayerList.vue'
 export default defineComponent({
@@ -68,9 +67,6 @@ export default defineComponent({
 		const startGame = () => {
 			ws.value.startGame()
 		}
-
-		// TODO Call beforeRouteLeave guards in deactivated components.
-		// odhlasit sa z hry ked idem prec zo stranky
 
 		return {
 			game,
