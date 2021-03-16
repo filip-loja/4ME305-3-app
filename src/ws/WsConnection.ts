@@ -133,7 +133,7 @@ export class WsConnection {
 		this.socket.on(eventName + '-resp', (data: any) => {
 			resolver(data)
 		})
-		return withTimeout(5000, request).catch(err => {
+		return withTimeout(15000, request).catch(err => {
 			errorAlert(err)
 			return null
 		}).then(resp => {
