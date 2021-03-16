@@ -5,7 +5,7 @@
 
 				<ion-item class="ion-no-padding">
 					<ion-label position="floating">Game ID</ion-label>
-					<ion-input type="text" required v-model="gameId" />
+					<ion-input type="number" required v-model="gameId" />
 				</ion-item>
 
 				<br /><br />
